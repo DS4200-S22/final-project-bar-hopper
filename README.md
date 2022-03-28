@@ -86,3 +86,6 @@ See Canvas for more detail on our academic integrity policy and expectations.
 1. Make sure your data is included in the repository on GitHub in the `data` folder.
 
 1. Check on Canvas for the specific requirements of the project milestone you are completing including further submission instructions. 
+
+# Resources
+https://www.d3indepth.com/geographic/
