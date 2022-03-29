@@ -16,36 +16,126 @@
         width = +svg.attr("width"),
         height = +svg.attr("height");
 
-    // Map and projection. Try:  d3.geoAiry() / d3.geoAitoff() / d3.geoArmadillo() / d3.geoAugust() / d3.geoAzimuthalEqualArea() / d3.geoAzimuthalEquidistant() and more
-    // const projection = d3.geoAitoff()
-    // d3.geoMercator
-    // const projection = d3.geoConicEqualArea()
-    //     .center([42.3601, 71.0589])
-    //     .fitSize([400, 300], )
-    // .scale(300)
-    // .scale(width / 1.3 / Math.PI)
-    // .translate([width / 2, height / 2])
+
+
+    // Create data for circles:
+    const markers = [{
+            long: 71.0892,
+            lat: 42.3398
+        }, // Northeastern
+        {
+            long: 71,
+            lat: 42.3
+        }, // Random
+        {
+            long: 1,
+            lat: 1
+        },
+    ];
 
     // Load external data and boot
+    // "https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson"
     d3.json("../data/boston.geojson").then(function(data) {
 
-        console.log(data)
+            // Map and projection
+            const projection = d3.geoMercator()
+                .center([42.3601, 71.0589]) // Center on center of Boston
+                .fitSize([800, 600], data); // Fit data to map size
+            // .center([2, 47]) // GPS of location to zoom on
+            // .scale(1020) // This is like the zoom
+            // .translate([width / 2, height / 2])
 
-        const projection = d3.geoMercator()
-            .center([42.3601, 71.0589]) // Center on center of Boston
-            .fitSize([800, 600], data); // Fit data to map size
+            // Filter data
+            // data.features = data.features.filter(d => d.properties.name == "France")
 
-        // Draw the map
-        svg.append("g")
-            .selectAll("path")
-            .data(data.features)
-            .join("path")
-            .attr("fill", "#69b3a2")
-            .attr("d", d3.geoPath()
-                .projection(projection)
-            )
-            .style("stroke", "#fff")
-    })
+            // Draw the map
+            svg.append("g")
+                .selectAll("path")
+                .data(data.features)
+                .join("path")
+                .attr("fill", "#b8b8b8")
+                .attr("d", d3.geoPath()
+                    .projection(projection)
+                )
+                .style("stroke", "black")
+                .style("opacity", .3)
+
+            // Add circles:
+            svg
+                .selectAll("myCircles")
+                .data(markers)
+                .join("circle")
+                .attr("cx", d => d.lat)
+                .attr("cy", d => d.long)
+                // .attr("cx", d => projection([d.long, d.lat])[0])
+                // .attr("cy", d => projection([d.long, d.lat])[1])
+                .attr("r", 14)
+                .style("fill", "69b3a2")
+                .attr("stroke", "#69b3a2")
+                .attr("stroke-width", 3)
+                .attr("fill-opacity", .4)
+
+            console.log(markers)
+        })
+        // // The svg
+        // const svg = d3.select("svg"),
+        //     width = +svg.attr("width"),
+        //     height = +svg.attr("height");
+
+    // // Map and projection. Try:  d3.geoAiry() / d3.geoAitoff() / d3.geoArmadillo() / d3.geoAugust() / d3.geoAzimuthalEqualArea() / d3.geoAzimuthalEquidistant() and more
+    // // const projection = d3.geoAitoff()
+    // // d3.geoMercator
+    // // const projection = d3.geoConicEqualArea()
+    // //     .center([42.3601, 71.0589])
+    // //     .fitSize([400, 300], )
+    // // .scale(300)
+    // // .scale(width / 1.3 / Math.PI)
+    // // .translate([width / 2, height / 2])
+
+    // // Create data for circles:
+    // const markers = [{
+    //         long: 71.0892,
+    //         lat: 42.3398
+    //     }, // Northeastern
+    //     {
+    //         long: 71,
+    //         lat: 42.3
+    //     }, // Random
+    // ];
+
+    // // Load external data and boot
+    // d3.json("../data/boston.geojson").then(function(data) {
+
+    //     console.log(data)
+
+    //     const projection = d3.geoMercator()
+    //         .center([42.3601, 71.0589]) // Center on center of Boston
+    //         .fitSize([800, 600], data); // Fit data to map size
+
+    //     // Draw the map
+    //     svg.append("g")
+    //         .selectAll("path")
+    //         .data(data.features)
+    //         .join("path")
+    //         .attr("fill", "#69b3a2")
+    //         .attr("d", d3.geoPath()
+    //             .projection(projection)
+    //         )
+    //         .style("stroke", "#fff")
+
+    //     // Add circles:
+    //     svg
+    //         .selectAll("myCircles")
+    //         .data(markers)
+    //         .join("circle")
+    //         .attr("cx", data => projection([data.long, data.lat])[0])
+    //         .attr("cy", data => projection([data.long, data.lat])[1])
+    //         .attr("r", 14)
+    //         .style("fill", "69b3a2")
+    //         .attr("stroke", "#69b3a2")
+    //         .attr("stroke-width", 3)
+    //         .attr("fill-opacity", .4)
+    // })
 
     // // Load external data and boot
     // d3.json("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson").then(function(data) {
