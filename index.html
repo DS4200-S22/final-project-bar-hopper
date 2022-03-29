@@ -8,7 +8,7 @@
 <!-- <script src='js/map.js'></script> -->
 
 <!-- Create an element where the map will take place -->
-<svg id="my_dataviz" width="400" height="300"></svg>
+<svg id="my_dataviz" width="800" height="600"></svg>
 
 <script>
     // The svg
@@ -32,8 +32,8 @@
         console.log(data)
 
         const projection = d3.geoMercator()
-            .center([42.3601, 71.0589])
-            .fitSize([400, 300], data);
+            .center([42.3601, 71.0589]) // Center on center of Boston
+            .fitSize([800, 600], data); // Fit data to map size
 
         // Draw the map
         svg.append("g")
