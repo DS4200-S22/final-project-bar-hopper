@@ -10,7 +10,7 @@
   
   <!-- CSS Styling -->
   <link rel='stylesheet' href='style.css'>
-
+  <link rel='stylesheet' href='./styles/scatter.css'>
 </head>
 
 <!-- Main page content -->
@@ -45,9 +45,22 @@
  
 <!-- Visualization -->   
 <h1>Visualization</h1>
-  
 <div class='vis-holder' id="vis-container">
-
+  <div class='legend'>
+    <div class='right-align'>
+      <div class="box" style='background: black;'></div>
+      <div class='label'>unknow</div>
+      <div class="box" style='background: #eb4034;'></div>
+      <div class='label' >$</div>
+      <div class="box" style='background: #1c03fc;'></div>
+      <div class='label' >$$</div>
+      <div class="box" style='background: #6eeb34;'></div>
+      <div class='label' >$$$</div>
+      <div class="box" style='background: #34ebdc;'></div>
+      <div class='label' >$$$$</div>
+    </div>
+  </div>
+  <div id="vis-scatter"></div>
 </div>
   
   
