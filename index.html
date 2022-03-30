@@ -20,17 +20,17 @@
 
     // Create data for circles:
     const markers = [{
-            long: 71.0892,
+            long: -71.0892,
             lat: 42.3398
         }, // Northeastern
         {
-            long: 71,
-            lat: 42.3
-        }, // Random
+            long: -71.0589,
+            lat: 42.3601
+        }, // Roxbury
         {
-            long: 1,
-            lat: 1
-        },
+            long: -71.0914,
+            lat: 42.3152
+        }
     ];
 
     // Load external data and boot
@@ -39,7 +39,7 @@
 
             // Map and projection
             const projection = d3.geoMercator()
-                .center([42.3601, 71.0589]) // Center on center of Boston
+                // .center([42.3601, 71.0589]) // Center on center of Boston/
                 .fitSize([800, 600], data); // Fit data to map size
             // .center([2, 47]) // GPS of location to zoom on
             // .scale(1020) // This is like the zoom
@@ -65,10 +65,10 @@
                 .selectAll("myCircles")
                 .data(markers)
                 .join("circle")
-                .attr("cx", d => d.lat)
-                .attr("cy", d => d.long)
-                // .attr("cx", d => projection([d.long, d.lat])[0])
-                // .attr("cy", d => projection([d.long, d.lat])[1])
+                // .attr("cx", d => d.lat)
+                // .attr("cy", d => d.long)
+                .attr("cx", d => projection([d.long, d.lat])[0])
+                .attr("cy", d => projection([d.long, d.lat])[1])
                 .attr("r", 14)
                 .style("fill", "69b3a2")
                 .attr("stroke", "#69b3a2")
