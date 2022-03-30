@@ -1,13 +1,12 @@
+// set width and height of svg
+const width = 800
+const height = 600
+
 // The svg
-// const svg = d3.select("svg"),
-//     width = +svg.attr("width"),
-//     height = +svg.attr("height");
 const svg = d3.select("#my_dataviz")
     .append("svg")
-    .attr("width", 800)
-    .attr("height", 600)
-
-
+    .attr("width", width)
+    .attr("height", height)
 
 // Create data for circles:
 const markers = [{
@@ -58,24 +57,27 @@ d3.json("../data/boston.geojson").then(function(data) {
         .style("border-radius", "5px")
         .style("padding", "10px")
 
-
-
     // A function that change this tooltip when the user hover a point.
     // Its opacity is set to 1: we can now see it. Plus it set the text and position of tooltip depending on the datapoint (d)
     const mouseover = function(event, d) {
+        console.log("over")
         tooltip
             .style("opacity", 1)
     }
 
-    const mousemove = function(event, d) {
+    var mousemove = function(event, d) {
+        console.log("move")
         tooltip
             .html("This is " + d.name + "<br> Long: " + d.long + "<br> Lat: " + d.lat + "<br>")
-            .style("left", (event.x) / 2 + "px") // It is important to put the +90: other wise the tooltip is exactly where the point is an it creates a weird effect
-            .style("top", (event.y) / 2 + "px")
+            // .style("left", (event.x) / 2 + "px") // It is important to put the +90: other wise the tooltip is exactly where the point is an it creates a weird effect
+            // .style("top", (event.y) / 2 + "px")
+            .style("left", event.x + "px") // It is important to put the +90: other wise the tooltip is exactly where the point is an it creates a weird effect
+            .style("top", event.y + "px")
     }
 
     // A function that change this tooltip when the leaves a point: just need to set opacity to 0 again
-    const mouseleave = function(event, d) {
+    var mouseleave = function(event, d) {
+        console.log("leave")
         tooltip
             .transition()
             .duration(200)
@@ -99,50 +101,4 @@ d3.json("../data/boston.geojson").then(function(data) {
         .on("mouseleave", mouseleave)
 
     console.log(markers)
-
-    // add event listeners
-
-    // // on mouseover event, call mouseover function
-    // svg.selectAll("circle")
-    //     .on("mouseover", mouseover)
-    //     // .on("mouseout", mouseout)
-    //     .on("mousemove", mousemove)
-    //     .on("mouseleave", mouseleave)
 });
-
-// /* 
-
-//   Tooltip Set-up  
-
-// */
-
-// // TODO: What does each line of this code do? 
-// // Adds a div to the hard-coded-bar div with attriute id: tooltip2 and class tooltip
-// const tooltip = d3.select("#my_dataviz")
-//     .append("div")
-//     .attr('id', "tooltip")
-//     .style("opacity", 0)
-//     .attr("class", "tooltip");
-
-// // TODO: What does each line of this code do?
-// // Creates the mouseover function
-// const mouseover = function(event, d) {
-//     console.log(d.long)
-//     tooltip.html("Long: " + d.long + "<br> Lat: " + d.lat + "<br>")
-//         .style("opacity", 1);
-// }
-
-
-// const mouseout = function(event, d) {
-//     console.log(d.lat)
-//     tooltip.style("opacity", 0);
-// }
-
-// // TODO: What does each line of this code do? 
-// // Creates the mousemove function
-// const mousemove = function(event, d) {
-//     console.log('moving')
-//     tooltip.style("left", (event.x) + "px")
-//         .style("top", (event.pageY) + "px");
-//     // .style("top", (event.pageY + yTooltipOffset) + "px");
-// }
