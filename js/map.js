@@ -23,6 +23,14 @@ const markers = [{
     }
 ];
 
+d3.csv("../data/final_main_data.csv").then(function(data) {
+    // console.log(data)
+    data.forEach(element => {
+        // console.log(element)
+        console.log("Longitude: " + element.longitude + ", Latitude: " + element.latitude)
+    });
+})
+
 // Load external data and boot
 d3.json("../data/boston.geojson").then(function(data) {
 
