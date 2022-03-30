@@ -70,15 +70,15 @@ d3.csv("../data/final_main_data.csv").then(function(main_data) {
         // A function that change this tooltip when the user hover a point.
         // Its opacity is set to 1: we can now see it. Plus it set the text and position of tooltip depending on the datapoint (d)
         const mouseover = function(event, d) {
-            console.log("over")
+            // console.log("over")
             tooltip
                 .style("opacity", 1)
         }
 
         var mousemove = function(event, d) {
-            console.log("move")
+            // console.log("move")
             tooltip
-                .html("This is " + d.name + "<br> Long: " + d.long + "<br> Lat: " + d.lat + "<br>")
+                .html("This esatblishment is: " + d.name + "<br> Price: " + d.price + "<br> Rating: " + d.rating + "<br>")
                 // .style("left", (event.x) / 2 + "px") // It is important to put the +90: other wise the tooltip is exactly where the point is an it creates a weird effect
                 // .style("top", (event.y) / 2 + "px")
                 .style("left", event.x + "px") // It is important to put the +90: other wise the tooltip is exactly where the point is an it creates a weird effect
@@ -87,7 +87,7 @@ d3.csv("../data/final_main_data.csv").then(function(main_data) {
 
         // A function that change this tooltip when the leaves a point: just need to set opacity to 0 again
         var mouseleave = function(event, d) {
-            console.log("leave")
+            // console.log("leave")
             tooltip
                 .transition()
                 .duration(200)
@@ -130,8 +130,8 @@ d3.csv("../data/final_main_data.csv").then(function(main_data) {
     });
 
     // console.log(data)
-    main_data.forEach(element => {
-        // console.log(element)
-        console.log("Longitude: " + element.longitude + ", Latitude: " + element.latitude)
-    });
+    // main_data.forEach(element => {
+    //     // console.log(element)
+    //     console.log("Longitude: " + element.longitude + ", Latitude: " + element.latitude)
+    // });
 })
