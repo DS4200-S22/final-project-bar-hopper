@@ -24,13 +24,6 @@
         }
     ];
 
-    // d3.csv("../data/final_main_data.csv").then(function(data) {
-    //     // console.log(data)
-    //     data.forEach(element => {
-    //         // console.log(element)
-    //         console.log("Longitude: " + element.longitude + ", Latitude: " + element.latitude)
-    //     });
-    // })
     d3.csv("https://raw.githubusercontent.com/DS4200-S22/final-project-bar-hopper/main/data/final_main_data.csv").then(function(main_data) {
 
         // Load external data and boot
@@ -60,15 +53,15 @@
 
             // Add a tooltip div. Here I define the general feature of the tooltip: stuff that do not depend on the data point.
             // Its opacity is set to 0: we don't see it by default.
-            const tooltip = d3.select("#my_dataviz")
+            const tooltip = d3.select("#vis_map")
                 .append("div")
                 .style("opacity", 0)
                 .attr("class", "tooltip")
-                .style("background-color", "white")
-                .style("border", "solid")
-                .style("border-width", "1px")
-                .style("border-radius", "5px")
-                .style("padding", "10px")
+                // .style("background-color", "white")
+                // .style("border", "solid")
+                // .style("border-width", "1px")
+                // .style("border-radius", "5px")
+                // .style("padding", "10px")
 
             // A function that change this tooltip when the user hover a point.
             // Its opacity is set to 1: we can now see it. Plus it set the text and position of tooltip depending on the datapoint (d)
@@ -84,8 +77,8 @@
                     .html("This esatblishment is: " + d.name + "<br> Price: " + d.price + "<br> Rating: " + d.rating + "<br>")
                     // .style("left", (event.x) / 2 + "px") // It is important to put the +90: other wise the tooltip is exactly where the point is an it creates a weird effect
                     // .style("top", (event.y) / 2 + "px")
-                    .style("left", event.x + "px") // It is important to put the +90: other wise the tooltip is exactly where the point is an it creates a weird effect
-                    .style("top", event.y + "px")
+                    .style("left", event.pageX + "px") // It is important to put the +90: other wise the tooltip is exactly where the point is an it creates a weird effect
+                    .style("top", event.pageY + "px")
             }
 
             // A function that change this tooltip when the leaves a point: just need to set opacity to 0 again

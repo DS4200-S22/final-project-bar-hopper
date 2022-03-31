@@ -82,7 +82,7 @@
 
         const mousemove = function(event, d) {
             tooltip
-                .html(`Review Count: ${d['review_count' || 'unknown']}, Review Rating: ${d['rating'] || 'unknow'}, Price: ${d['price'] || 'unknown'}`)
+                .html(`Review Count: ${d['review_count' || 'unknown']}, Review Rating: ${d['rating'] || 'unknown'}, Price: ${d['price'] || 'unknown'}`)
                 .style("left", (event.pageX + 10) + "px")
                 .style("top", (event.pageY - 45) + "px")
         }
