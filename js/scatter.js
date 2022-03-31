@@ -14,7 +14,7 @@
         .attr("height", innerHeight)  // Sets the height of the svg
         .attr("viewBox", [0, 0, width, height]);  // Sets the viewbox of the svg
 
-    d3.csv('../data/main_data.csv').then(data => {
+    d3.csv('https://github.com/DS4200-S22/final-project-bar-hopper/tree/main/data/final_main_data.csv').then(data => {
         // Setting up x-axis
         const xKey = 'Review Rating';
         const xMax = d3.max(data, d => {

@@ -32,7 +32,7 @@
     //     });
     // })
 
-    d3.csv("../data/final_main_data.csv").then(function (main_data) {
+    d3.csv("https://github.com/DS4200-S22/final-project-bar-hopper/tree/main/data/final_main_data.csv").then(function (main_data) {
 
         // Load external data and boot
         d3.json("../data/boston.geojson").then(function (data) {
