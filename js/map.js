@@ -31,7 +31,6 @@
     //         console.log("Longitude: " + element.longitude + ", Latitude: " + element.latitude)
     //     });
     // })
-
     d3.csv("https://raw.githubusercontent.com/DS4200-S22/final-project-bar-hopper/main/data/final_main_data.csv").then(function(main_data) {
 
         // Load external data and boot
