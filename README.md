@@ -89,6 +89,11 @@ See Canvas for more detail on our academic integrity policy and expectations.
 
 # Resources
 https://www.d3indepth.com/geographic/
+http://bl.ocks.org/peterssonjonas/4a0e7cb8d23231243e0e
+https://bl.ocks.org/d3noob/e600fd7ebc4c2a5ed57374a9ff95ac23
+http://bl.ocks.org/LauraHornbake/6248343
+https://d3-graph-gallery.com/graph/barplot_horizontal.html
+https://observablehq.com/@d3/d3-scaletime
 ### V4
 https://bl.ocks.org/Andrew-Reid/4f3e3cdf708036ed076075b937357826
 ### V6
