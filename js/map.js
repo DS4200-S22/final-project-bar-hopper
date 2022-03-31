@@ -4,7 +4,7 @@
     const height = 600
 
     // The svg
-    const svg = d3.select("#my_dataviz")
+    const svg = d3.select("#vis_map")
         .append("svg")
         .attr("width", width)
         .attr("height", height)
