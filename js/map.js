@@ -40,6 +40,7 @@
 
             // Filter data
             // data.features = data.features.filter(d => d.properties.name == "France")
+            main_data = main_data.filter(d => d.price == "$$")
 
             // Draw the map
             g.selectAll("path")
@@ -59,10 +60,10 @@
                 .style("opacity", 0)
                 .attr("class", "tooltip")
                 // .style("background-color", "white")
-                // .style("border", "solid")
-                // .style("border-width", "1px")
-                // .style("border-radius", "5px")
-                // .style("padding", "10px")
+                .style("border", "solid")
+                .style("border-width", "1px")
+                .style("border-radius", "5px")
+                .style("padding", "10px")
 
             // A function that change this tooltip when the user hover a point.
             // Its opacity is set to 1: we can now see it. Plus it set the text and position of tooltip depending on the datapoint (d)
@@ -76,11 +77,8 @@
                 // console.log("move")
                 tooltip
                     .html("This establishment is: " + d.name + "<br> Price: " + d.price + "<br> Rating: " + d.rating + "<br>")
-                    // .style("left", (event.x) / 2 + "px") // It is important to put the +90: other wise the tooltip is exactly where the point is an it creates a weird effect
-                    // .style("top", (event.y) / 2 + "px")
                     .style("left", event.pageX + "px") // It is important to put the +90: other wise the tooltip is exactly where the point is an it creates a weird effect
                     .style("top", event.pageY + "px")
-                    // .style("opacity", 1)
             }
 
             // A function that change this tooltip when the leaves a point: just need to set opacity to 0 again
@@ -91,24 +89,6 @@
                     .duration(200)
                     .style("opacity", 0)
             }
-
-            // // Add circles:
-            // svg
-            //     .selectAll("myCircles")
-            //     .data(markers)
-            //     .join("circle")
-            //     .attr("cx", d => projection([d.long, d.lat])[0])
-            //     .attr("cy", d => projection([d.long, d.lat])[1])
-            //     .attr("r", 6)
-            //     .style("fill", "69b3a2")
-            //     .attr("stroke", "#69b3a2")
-            //     .attr("stroke-width", 3)
-            //     .attr("fill-opacity", .4)
-            //     .on("mouseover", mouseover)
-            //     .on("mousemove", mousemove)
-            //     .on("mouseleave", mouseleave)
-
-            // console.log(markers)
 
             // Add circles:
             svg
