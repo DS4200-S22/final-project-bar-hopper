@@ -31,3 +31,10 @@ h3 {
     fill: green;
     stroke: black;
 }
+
+.time-bar {
+	fill: orange;
+	opacity: 80%;
+	stroke: black;
+	stroke-width: 1;
+}
