@@ -9,6 +9,8 @@
         .attr("width", width)
         .attr("height", height)
 
+    let g = svg.append("g");
+
     // Create data for circles:
     const markers = [{
             // Northeastern
@@ -40,8 +42,7 @@
             // data.features = data.features.filter(d => d.properties.name == "France")
 
             // Draw the map
-            svg.append("g")
-                .selectAll("path")
+            g.selectAll("path")
                 .data(data.features)
                 .join("path")
                 .attr("fill", "#b8b8b8")
@@ -125,10 +126,15 @@
                 .on("mouseleave", mouseleave)
         });
 
-        // console.log(data)
-        // main_data.forEach(element => {
-        //     // console.log(element)
-        //     console.log("Longitude: " + element.longitude + ", Latitude: " + element.latitude)
-        // });
-    })
+        var zoom = d3.zoom()
+            .scaleExtent([1, 8])
+            .on('zoom', function(event) {
+                g.selectAll('path')
+                    .attr('transform', event.transform);
+                svg.selectAll("circle")
+                    .attr('transform', event.transform);
+            });
+
+        svg.call(zoom);
+    });
 })();
