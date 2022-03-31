@@ -1,5 +1,5 @@
 // Set margins and dimensions 
-(function () {
+(function() {
     const margin = { top: 50, right: 50, bottom: 50, left: 200 };
     const width = 1500;
     const height = 1000;
@@ -11,10 +11,10 @@
     const svg = d3.select(tagId)
         .append("svg")
         .attr("width", innerWidth) // Sets the width of the svg
-        .attr("height", innerHeight)  // Sets the height of the svg
-        .attr("viewBox", [0, 0, width, height]);  // Sets the viewbox of the svg
+        .attr("height", innerHeight) // Sets the height of the svg
+        .attr("viewBox", [0, 0, width, height]); // Sets the viewbox of the svg
 
-    d3.csv('https://github.com/DS4200-S22/final-project-bar-hopper/tree/main/data/final_main_data.csv').then(data => {
+    d3.csv('https://raw.githubusercontent.com/DS4200-S22/final-project-bar-hopper/main/data/final_main_data.csv').then(data => {
         // Setting up x-axis
         const xKey = 'Review Rating';
         const xMax = d3.max(data, d => {
@@ -76,18 +76,18 @@
             .style('opacity', 0)
             .attr('class', 'tooltip')
 
-        const mouseover = function (d) {
+        const mouseover = function(d) {
             tooltip.style('opacity', 1);
         }
 
-        const mousemove = function (event, d) {
+        const mousemove = function(event, d) {
             tooltip
                 .html(`Review Count: ${d['review_count' || 'unknow']}, Review Rating: ${d['rating'] || 'unknow'}, Price: ${d['price'] || 'unknown'}`)
                 .style("left", (event.pageX + 10) + "px")
                 .style("top", (event.pageY - 45) + "px")
         }
 
-        var mouseleave = function (d) {
+        var mouseleave = function(d) {
             tooltip
                 .transition()
                 .duration(300)
@@ -111,8 +111,11 @@
 
         // Setting up zoom
         const zoom = d3.zoom()
-            .scaleExtent([0, 30])  // This control how much you can unzoom (x0.5) and zoom (x20)
-            .extent([[0, 0], [width, height]])
+            .scaleExtent([0, 30]) // This control how much you can unzoom (x0.5) and zoom (x20)
+            .extent([
+                [0, 0],
+                [width, height]
+            ])
             .on("zoom", updateChart);
 
         // A function that updates the chart when the user zoom and thus new boundaries are available
@@ -128,8 +131,8 @@
             // update circle position
             svg
                 .selectAll("circle")
-                .attr('cx', function (d) { return newX(parseInt(d['rating'])) })
-                .attr('cy', function (d) { return newY(parseInt(d['review_count'])) });
+                .attr('cx', function(d) { return newX(parseInt(d['rating'])) })
+                .attr('cy', function(d) { return newY(parseInt(d['review_count'])) });
         }
 
         svg.call(zoom)

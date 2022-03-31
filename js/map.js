@@ -1,5 +1,5 @@
 // set width and height of svg
-(function () {
+(function() {
     const width = 800
     const height = 600
 
@@ -11,17 +11,17 @@
 
     // Create data for circles:
     const markers = [{
-        // Northeastern
-        long: -71.0892,
-        lat: 42.3398,
-        name: "Northeastern University"
-    },
-    {
-        // Boston Common
-        long: -71.0668,
-        lat: 42.3552,
-        name: "Boston Common"
-    }
+            // Northeastern
+            long: -71.0892,
+            lat: 42.3398,
+            name: "Northeastern University"
+        },
+        {
+            // Boston Common
+            long: -71.0668,
+            lat: 42.3552,
+            name: "Boston Common"
+        }
     ];
 
     // d3.csv("../data/final_main_data.csv").then(function(data) {
@@ -32,10 +32,10 @@
     //     });
     // })
 
-    d3.csv("https://github.com/DS4200-S22/final-project-bar-hopper/tree/main/data/final_main_data.csv").then(function (main_data) {
+    d3.csv("https://raw.githubusercontent.com/DS4200-S22/final-project-bar-hopper/main/data/final_main_data.csv").then(function(main_data) {
 
         // Load external data and boot
-        d3.json("../data/boston.geojson").then(function (data) {
+        d3.json("../data/boston.geojson").then(function(data) {
 
             // Map and projection
             const projection = d3.geoMercator()
@@ -70,13 +70,13 @@
 
             // A function that change this tooltip when the user hover a point.
             // Its opacity is set to 1: we can now see it. Plus it set the text and position of tooltip depending on the datapoint (d)
-            const mouseover = function (event, d) {
+            const mouseover = function(event, d) {
                 // console.log("over")
                 tooltip
                     .style("opacity", 1)
             }
 
-            var mousemove = function (event, d) {
+            var mousemove = function(event, d) {
                 // console.log("move")
                 tooltip
                     .html("This esatblishment is: " + d.name + "<br> Price: " + d.price + "<br> Rating: " + d.rating + "<br>")
@@ -87,7 +87,7 @@
             }
 
             // A function that change this tooltip when the leaves a point: just need to set opacity to 0 again
-            var mouseleave = function (event, d) {
+            var mouseleave = function(event, d) {
                 // console.log("leave")
                 tooltip
                     .transition()
