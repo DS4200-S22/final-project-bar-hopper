@@ -36,6 +36,9 @@
         // Load external data and boot
         d3.json("https://raw.githubusercontent.com/DS4200-S22/final-project-bar-hopper/main/data/boston.geojson").then(function(data) {
 
+            // Print data to console
+            console.log(data);
+
             // Map and projection
             const projection = d3.geoMercator()
                 .fitSize([800, 600], data); // Fit data to map size

@@ -82,7 +82,7 @@
 
         const mousemove = function(event, d) {
             tooltip
-                .html(`Review Count: ${d['review_count' || 'unknow']}, Review Rating: ${d['rating'] || 'unknow'}, Price: ${d['price'] || 'unknown'}`)
+                .html(`Review Count: ${d['review_count' || 'unknown']}, Review Rating: ${d['rating'] || 'unknow'}, Price: ${d['price'] || 'unknown'}`)
                 .style("left", (event.pageX + 10) + "px")
                 .style("top", (event.pageY - 45) + "px")
         }
@@ -136,7 +136,7 @@
         }
 
         svg.call(zoom)
-        // Reference Links
-        // http://bl.ocks.org/peterssonjonas/4a0e7cb8d23231243e0e
+            // Reference Links
+            // http://bl.ocks.org/peterssonjonas/4a0e7cb8d23231243e0e
     });
 })();
