@@ -34,7 +34,7 @@
     d3.csv("https://raw.githubusercontent.com/DS4200-S22/final-project-bar-hopper/main/data/final_main_data.csv").then(function(main_data) {
 
         // Load external data and boot
-        d3.json("../data/boston.geojson").then(function(data) {
+        d3.json("https://raw.githubusercontent.com/DS4200-S22/final-project-bar-hopper/main/data/boston.geojson").then(function(data) {
 
             // Map and projection
             const projection = d3.geoMercator()
