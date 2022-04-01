@@ -100,7 +100,7 @@
                 .attr("r", 6)
                 .style("fill", "69b3a2")
                 .attr("stroke", "#69b3a2")
-                .attr("stroke-width", 3)
+                // .attr("stroke-width", 3)
                 .attr("fill-opacity", .4)
                 .on("mouseover", mouseover)
                 .on("mousemove", mousemove)
