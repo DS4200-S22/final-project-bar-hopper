@@ -40,7 +40,10 @@
 
             // Filter data
             // data.features = data.features.filter(d => d.properties.name == "France")
-            main_data = main_data.filter(d => d.price == "$$")
+            let price_category = "$$";
+            let price_categories = ["$", "$$$$"];
+            // main_data = main_data.filter(d => d.price == price_category)
+            main_data = main_data.filter(d => price_categories.includes(d.price))
 
             // Draw the map
             g.selectAll("path")
