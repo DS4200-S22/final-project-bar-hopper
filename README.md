@@ -104,3 +104,4 @@ https://d3-graph-gallery.com/graph/bubblemap_basic.html
 https://d3-graph-gallery.com/graph/bubblemap_tooltip.html
 ## Checkboxes to Filter Data
 https://bl.ocks.org/johnnygizmo/531991a77047112b7ca89f78b840fba5
+https://d3-graph-gallery.com/graph/bubblemap_buttonControl.html
