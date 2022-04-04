@@ -41,9 +41,13 @@
             // Filter data
             // data.features = data.features.filter(d => d.properties.name == "France")
             let price_category = "$$";
-            let price_categories = ["$", "$$$$"];
+            // let price_categories = ["$", "$$", "$$$", "$$$$"];
+            let price_categories = []
+
+            d3.selectAll(".myCheckbox").on("change", update);
+            main_data = update(main_data);
             // main_data = main_data.filter(d => d.price == price_category)
-            main_data = main_data.filter(d => price_categories.includes(d.price))
+            // main_data = main_data.filter(d => price_categories.includes(d.price))
 
             // Draw the map
             g.selectAll("path")
@@ -134,5 +138,24 @@
                 .attr('r', 6 / event.transform.k);
             console.log(event.transform.k)
         }
+
+        function update(main_data) {
+            // var choices = [];
+            price_categories = []
+            d3.selectAll(".myCheckbox").each(function(d) {
+                cb = d3.select(this);
+                if (cb.property("checked")) {
+                    // choices.push(cb.property("value"));
+                    price_categories.push(cb.property("value"));
+
+                }
+            });
+            // main_data = main_data.filter(d => price_categories.includes(d.price))
+
+            console.log(main_data)
+
+            return main_data;
+        }
     });
+
 })();
