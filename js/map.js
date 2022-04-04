@@ -26,10 +26,13 @@
         }
     ];
 
-    d3.csv("https://raw.githubusercontent.com/DS4200-S22/final-project-bar-hopper/main/data/final_main_data.csv").then(function(main_data) {
+    // d3.csv("https://raw.githubusercontent.com/DS4200-S22/final-project-bar-hopper/main/data/final_main_data.csv").then(function(main_data)
+
+
+    d3.json("https://raw.githubusercontent.com/DS4200-S22/final-project-bar-hopper/main/data/boston.geojson").then(function(data) {
 
         // Load external data and boot
-        d3.json("https://raw.githubusercontent.com/DS4200-S22/final-project-bar-hopper/main/data/boston.geojson").then(function(data) {
+        d3.csv("https://raw.githubusercontent.com/DS4200-S22/final-project-bar-hopper/main/data/final_main_data.csv").then(function(main_data) {
 
             // Print data to console
             console.log(data);
@@ -45,7 +48,7 @@
             let price_categories = []
 
             d3.selectAll(".myCheckbox").on("change", update);
-            main_data = update(main_data);
+            // filtered_main_data = update(main_data);
             // main_data = main_data.filter(d => d.price == price_category)
             // main_data = main_data.filter(d => price_categories.includes(d.price))
 
@@ -97,65 +100,126 @@
                     .style("opacity", 0)
             }
 
-            // Add circles:
-            svg
-                .selectAll("myCircles")
-                .data(main_data)
-                .join("circle")
-                .attr("cx", d => projection([d.longitude, d.latitude])[0])
-                .attr("cy", d => projection([d.longitude, d.latitude])[1])
-                .attr("r", 6)
-                .style("fill", "69b3a2")
-                // .attr("stroke", "#69b3a2")
-                // .attr("stroke-width", 3)
-                .attr("fill-opacity", .4)
-                .on("mouseover", mouseover)
-                .on("mousemove", mousemove)
-                .on("mouseleave", mouseleave)
+            // // Add circles:
+            // svg
+            //     .selectAll("myCircles")
+            //     .data(main_data)
+            //     .join("circle")
+            //     .attr("cx", d => projection([d.longitude, d.latitude])[0])
+            //     .attr("cy", d => projection([d.longitude, d.latitude])[1])
+            //     .attr("r", 6)
+            //     .style("fill", "69b3a2")
+            //     // .attr("stroke", "#69b3a2")
+            //     // .attr("stroke-width", 3)
+            //     .attr("fill-opacity", .4)
+            //     .on("mouseover", mouseover)
+            //     .on("mousemove", mousemove)
+            //     .on("mouseleave", mouseleave)
+
+            var zoom = d3.zoom()
+                .scaleExtent([1, 8])
+                .on('zoom', updateChart);
+            // .on('zoom', function(event) {
+            //     g.selectAll('path')
+            //         .attr('transform', event.transform);
+            //     svg.selectAll("circle")
+            //         .attr('transform', event.transform);
+            // });
+
+            svg.call(zoom);
+
+
+            // A function that updates the chart when the user zoom and thus new boundaries are available
+            function updateChart(event) {
+
+                g.selectAll('path')
+                    .attr('transform', event.transform);
+
+                svg.selectAll("circle")
+                    .attr('transform', event.transform)
+                    .attr('r', 6 / event.transform.k);
+            }
+
+            function update() {
+                // var choices = [];
+                price_categories = []
+                    // Get checkbox data
+                d3.selectAll(".myCheckbox").each(function(d) {
+                    cb = d3.select(this);
+                    if (cb.property("checked")) {
+                        // choices.push(cb.property("value"));
+                        price_categories.push(cb.property("value"));
+
+                    }
+                });
+                // main_data = main_data.filter(d => price_categories.includes(d.price))
+
+                // console.log(price_categories)
+                console.log(main_data)
+
+                newData = main_data.filter(d => price_categories.includes(d.price))
+
+                console.log(newData)
+
+                // Add circles:
+                svg
+                    .selectAll("myCircles")
+                    .data(newData)
+                    .join("circle")
+                    .attr("cx", d => projection([d.longitude, d.latitude])[0])
+                    .attr("cy", d => projection([d.longitude, d.latitude])[1])
+                    .attr("r", 6)
+                    .style("fill", "69b3a2")
+                    // .attr("stroke", "#69b3a2")
+                    // .attr("stroke-width", 3)
+                    .attr("fill-opacity", .4)
+                    .on("mouseover", mouseover)
+                    .on("mousemove", mousemove)
+                    .on("mouseleave", mouseleave)
+            }
         });
 
-        var zoom = d3.zoom()
-            .scaleExtent([1, 8])
-            .on('zoom', updateChart);
-        // .on('zoom', function(event) {
+        // var zoom = d3.zoom()
+        //     .scaleExtent([1, 8])
+        //     .on('zoom', updateChart);
+        // // .on('zoom', function(event) {
+        // //     g.selectAll('path')
+        // //         .attr('transform', event.transform);
+        // //     svg.selectAll("circle")
+        // //         .attr('transform', event.transform);
+        // // });
+
+        // svg.call(zoom);
+
+
+        // // A function that updates the chart when the user zoom and thus new boundaries are available
+        // function updateChart(event) {
+
         //     g.selectAll('path')
         //         .attr('transform', event.transform);
+
         //     svg.selectAll("circle")
-        //         .attr('transform', event.transform);
-        // });
+        //         .attr('transform', event.transform)
+        //         .attr('r', 6 / event.transform.k);
+        // }
 
-        svg.call(zoom);
+        // function update() {
+        //     // var choices = [];
+        //     price_categories = []
+        //         // Get checkbox data
+        //     d3.selectAll(".myCheckbox").each(function(d) {
+        //         cb = d3.select(this);
+        //         if (cb.property("checked")) {
+        //             // choices.push(cb.property("value"));
+        //             price_categories.push(cb.property("value"));
 
+        //         }
+        //     });
+        //     // main_data = main_data.filter(d => price_categories.includes(d.price))
 
-        // A function that updates the chart when the user zoom and thus new boundaries are available
-        function updateChart(event) {
-
-            g.selectAll('path')
-                .attr('transform', event.transform);
-
-            svg.selectAll("circle")
-                .attr('transform', event.transform)
-                .attr('r', 6 / event.transform.k);
-            console.log(event.transform.k)
-        }
-
-        function update(main_data) {
-            // var choices = [];
-            price_categories = []
-            d3.selectAll(".myCheckbox").each(function(d) {
-                cb = d3.select(this);
-                if (cb.property("checked")) {
-                    // choices.push(cb.property("value"));
-                    price_categories.push(cb.property("value"));
-
-                }
-            });
-            // main_data = main_data.filter(d => price_categories.includes(d.price))
-
-            console.log(main_data)
-
-            return main_data;
-        }
+        //     // console.log(price_categories)
+        //     console.log(main_data)
+        // }
     });
 
 })();
