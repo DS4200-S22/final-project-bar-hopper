@@ -11,22 +11,20 @@
 
     let g = svg.append("g");
 
-    // Create data for circles:
-    const markers = [{
-            // Northeastern
-            long: -71.0892,
-            lat: 42.3398,
-            name: "Northeastern University"
-        },
-        {
-            // Boston Common
-            long: -71.0668,
-            lat: 42.3552,
-            name: "Boston Common"
-        }
-    ];
-
-    // d3.csv("https://raw.githubusercontent.com/DS4200-S22/final-project-bar-hopper/main/data/final_main_data.csv").then(function(main_data)
+    // // Create data for circles:
+    // const markers = [{
+    //         // Northeastern
+    //         long: -71.0892,
+    //         lat: 42.3398,
+    //         name: "Northeastern University"
+    //     },
+    //     {
+    //         // Boston Common
+    //         long: -71.0668,
+    //         lat: 42.3552,
+    //         name: "Boston Common"
+    //     }
+    // ];
 
 
     d3.json("https://raw.githubusercontent.com/DS4200-S22/final-project-bar-hopper/main/data/boston.geojson").then(function(data) {
@@ -34,24 +32,15 @@
         // Load external data and boot
         d3.csv("https://raw.githubusercontent.com/DS4200-S22/final-project-bar-hopper/main/data/final_main_data.csv").then(function(main_data) {
 
-            // Print data to console
-            console.log(data);
-
             // Map and projection
             const projection = d3.geoMercator()
                 .fitSize([800, 600], data); // Fit data to map size
 
             // Filter data
             // data.features = data.features.filter(d => d.properties.name == "France")
-            let price_category = "$$";
-            // let price_categories = ["$", "$$", "$$$", "$$$$"];
-            let price_categories = []
 
             d3.selectAll(".myCheckbox").on("change", update);
             update()
-                // filtered_main_data = update(main_data);
-                // main_data = main_data.filter(d => d.price == price_category)
-                // main_data = main_data.filter(d => price_categories.includes(d.price))
 
             // Draw the map
             g.selectAll("path")
@@ -134,24 +123,24 @@
 
                 svg.selectAll("circle")
                     .attr('transform', event.transform)
-                    .attr('r', 6 / event.transform.k);
+                    .attr('r', 6 / event.transform.k); // Scale down zoom of circles
             }
 
             function update() {
                 // Get checkbox data
                 d3.selectAll(".myCheckbox").each(function(d) {
                     cb = d3.select(this);
-                    grp = "p" + cb.property("value")
+                    price_level = "p" + cb.property("value")
                         // if (cb.property("checked")) {
                         //     price_categories.push(cb.property("value"));
                         // }
-                        // If the box is check, I show the group
+                        // If the box is checked, I show the group
                     if (cb.property("checked")) {
-                        svg.selectAll("." + grp).style("opacity", 1)
+                        svg.selectAll("." + price_level).style("opacity", 1)
 
                         // Otherwise I hide it
                     } else {
-                        svg.selectAll("." + grp).style("opacity", 0)
+                        svg.selectAll("." + price_level).style("opacity", 0)
                     }
                 });
             }
