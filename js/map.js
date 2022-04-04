@@ -9,28 +9,28 @@
         .attr("width", width)
         .attr("height", height)
 
-    // Create data for circles:
-    const markers = [{
-            // Northeastern
-            long: -71.0892,
-            lat: 42.3398,
-            name: "Northeastern University"
-        },
-        {
-            // Boston Common
-            long: -71.0668,
-            lat: 42.3552,
-            name: "Boston Common"
-        }
-    ];
+    let g = svg.append("g");
 
-    d3.csv("https://raw.githubusercontent.com/DS4200-S22/final-project-bar-hopper/main/data/final_main_data.csv").then(function(main_data) {
+    // // Create data for circles:
+    // const markers = [{
+    //         // Northeastern
+    //         long: -71.0892,
+    //         lat: 42.3398,
+    //         name: "Northeastern University"
+    //     },
+    //     {
+    //         // Boston Common
+    //         long: -71.0668,
+    //         lat: 42.3552,
+    //         name: "Boston Common"
+    //     }
+    // ];
+
+
+    d3.json("https://raw.githubusercontent.com/DS4200-S22/final-project-bar-hopper/main/data/boston.geojson").then(function(data) {
 
         // Load external data and boot
-        d3.json("https://raw.githubusercontent.com/DS4200-S22/final-project-bar-hopper/main/data/boston.geojson").then(function(data) {
-
-            // Print data to console
-            console.log(data);
+        d3.csv("https://raw.githubusercontent.com/DS4200-S22/final-project-bar-hopper/main/data/final_main_data.csv").then(function(main_data) {
 
             // Map and projection
             const projection = d3.geoMercator()
@@ -39,9 +39,11 @@
             // Filter data
             // data.features = data.features.filter(d => d.properties.name == "France")
 
+            d3.selectAll(".myCheckbox").on("change", update);
+            update()
+
             // Draw the map
-            svg.append("g")
-                .selectAll("path")
+            g.selectAll("path")
                 .data(data.features)
                 .join("path")
                 .attr("fill", "#b8b8b8")
@@ -58,25 +60,27 @@
                 .style("opacity", 0)
                 .attr("class", "tooltip")
                 // .style("background-color", "white")
-                // .style("border", "solid")
-                // .style("border-width", "1px")
-                // .style("border-radius", "5px")
-                // .style("padding", "10px")
+                .style("border", "solid")
+                .style("border-width", "1px")
+                .style("border-radius", "5px")
+                .style("padding", "10px")
 
             // A function that change this tooltip when the user hover a point.
             // Its opacity is set to 1: we can now see it. Plus it set the text and position of tooltip depending on the datapoint (d)
             const mouseover = function(event, d) {
                 // console.log("over")
-                tooltip
-                    .style("opacity", 1)
+
+                // If the current point is visible, show tooltip
+                if (d3.select(this).style("opacity") != 0) {
+                    tooltip
+                        .style("opacity", 1)
+                }
             }
 
             var mousemove = function(event, d) {
                 // console.log("move")
                 tooltip
-                    .html("This esatblishment is: " + d.name + "<br> Price: " + d.price + "<br> Rating: " + d.rating + "<br>")
-                    // .style("left", (event.x) / 2 + "px") // It is important to put the +90: other wise the tooltip is exactly where the point is an it creates a weird effect
-                    // .style("top", (event.y) / 2 + "px")
+                    .html("This establishment is: " + d.name + "<br> Price: " + d.price + "<br> Rating: " + d.rating + "<br>")
                     .style("left", event.pageX + "px") // It is important to put the +90: other wise the tooltip is exactly where the point is an it creates a weird effect
                     .style("top", event.pageY + "px")
             }
@@ -90,45 +94,60 @@
                     .style("opacity", 0)
             }
 
-            // // Add circles:
-            // svg
-            //     .selectAll("myCircles")
-            //     .data(markers)
-            //     .join("circle")
-            //     .attr("cx", d => projection([d.long, d.lat])[0])
-            //     .attr("cy", d => projection([d.long, d.lat])[1])
-            //     .attr("r", 6)
-            //     .style("fill", "69b3a2")
-            //     .attr("stroke", "#69b3a2")
-            //     .attr("stroke-width", 3)
-            //     .attr("fill-opacity", .4)
-            //     .on("mouseover", mouseover)
-            //     .on("mousemove", mousemove)
-            //     .on("mouseleave", mouseleave)
-
-            // console.log(markers)
-
             // Add circles:
             svg
                 .selectAll("myCircles")
                 .data(main_data)
                 .join("circle")
+                .attr("class", d => "p" + d.price.length) // price class
                 .attr("cx", d => projection([d.longitude, d.latitude])[0])
                 .attr("cy", d => projection([d.longitude, d.latitude])[1])
                 .attr("r", 6)
-                .style("fill", "69b3a2")
-                .attr("stroke", "#69b3a2")
-                .attr("stroke-width", 3)
+                .style("fill", "#0000ff")
+                // .style("fill", "69b3a2")
+                .style("opacity", 0)
+                .attr("stroke", "#000000")
+                .attr("stroke-width", 2)
                 .attr("fill-opacity", .4)
                 .on("mouseover", mouseover)
                 .on("mousemove", mousemove)
                 .on("mouseleave", mouseleave)
-        });
 
-        // console.log(data)
-        // main_data.forEach(element => {
-        //     // console.log(element)
-        //     console.log("Longitude: " + element.longitude + ", Latitude: " + element.latitude)
-        // });
-    })
+            var zoom = d3.zoom()
+                .scaleExtent([0.5, 16])
+                .on('zoom', updateChart);
+
+            svg.call(zoom);
+
+
+            // A function that updates the chart when the user zoom and thus new boundaries are available
+            function updateChart(event) {
+
+                g.selectAll('path')
+                    .attr('transform', event.transform);
+
+                svg.selectAll("circle")
+                    .attr('transform', event.transform)
+                    .attr('r', 6 / event.transform.k) // Scale down zoom of circles
+                    .attr('stroke-width', 2 / event.transform.k); // Scale down zoom of circles
+            }
+
+            function update() {
+                // Get checkbox data
+                d3.selectAll(".myCheckbox").each(function(d) {
+                    cb = d3.select(this);
+                    price_level = "p" + cb.property("value")
+                        // If the box is checked, I show the group
+                    if (cb.property("checked")) {
+                        svg.selectAll("." + price_level).style("opacity", 1)
+
+                        // Otherwise I hide it
+                    } else {
+                        svg.selectAll("." + price_level).style("opacity", 0)
+                    }
+                });
+            }
+        });
+    });
+
 })();
