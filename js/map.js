@@ -114,7 +114,7 @@
                 .on("mouseleave", mouseleave)
 
             var zoom = d3.zoom()
-                .scaleExtent([1, 8])
+                .scaleExtent([0.5, 16])
                 .on('zoom', updateChart);
 
             svg.call(zoom);
