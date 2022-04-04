@@ -69,8 +69,10 @@
             // Its opacity is set to 1: we can now see it. Plus it set the text and position of tooltip depending on the datapoint (d)
             const mouseover = function(event, d) {
                 // console.log("over")
-                tooltip
-                    .style("opacity", 1)
+                if (d3.select(this).style("opacity") != 0) {
+                    tooltip
+                        .style("opacity", 1)
+                }
             }
 
             var mousemove = function(event, d) {
@@ -131,9 +133,6 @@
                 d3.selectAll(".myCheckbox").each(function(d) {
                     cb = d3.select(this);
                     price_level = "p" + cb.property("value")
-                        // if (cb.property("checked")) {
-                        //     price_categories.push(cb.property("value"));
-                        // }
                         // If the box is checked, I show the group
                     if (cb.property("checked")) {
                         svg.selectAll("." + price_level).style("opacity", 1)
