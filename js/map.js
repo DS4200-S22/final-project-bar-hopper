@@ -102,7 +102,7 @@
                 .attr("cy", d => projection([d.longitude, d.latitude])[1])
                 .attr("r", 6)
                 .style("fill", "69b3a2")
-                .attr("stroke", "#69b3a2")
+                // .attr("stroke", "#69b3a2")
                 // .attr("stroke-width", 3)
                 .attr("fill-opacity", .4)
                 .on("mouseover", mouseover)
@@ -112,13 +112,27 @@
 
         var zoom = d3.zoom()
             .scaleExtent([1, 8])
-            .on('zoom', function(event) {
-                g.selectAll('path')
-                    .attr('transform', event.transform);
-                svg.selectAll("circle")
-                    .attr('transform', event.transform);
-            });
+            .on('zoom', updateChart);
+        // .on('zoom', function(event) {
+        //     g.selectAll('path')
+        //         .attr('transform', event.transform);
+        //     svg.selectAll("circle")
+        //         .attr('transform', event.transform);
+        // });
 
         svg.call(zoom);
+
+
+        // A function that updates the chart when the user zoom and thus new boundaries are available
+        function updateChart(event) {
+
+            g.selectAll('path')
+                .attr('transform', event.transform);
+
+            svg.selectAll("circle")
+                .attr('transform', event.transform)
+                .attr('r', 6 / event.transform.k);
+            console.log(event.transform.k)
+        }
     });
 })();
