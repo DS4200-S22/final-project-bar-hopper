@@ -69,6 +69,8 @@
             // Its opacity is set to 1: we can now see it. Plus it set the text and position of tooltip depending on the datapoint (d)
             const mouseover = function(event, d) {
                 // console.log("over")
+
+                // If the current point is visible, show tooltip
                 if (d3.select(this).style("opacity") != 0) {
                     tooltip
                         .style("opacity", 1)
@@ -97,14 +99,15 @@
                 .selectAll("myCircles")
                 .data(main_data)
                 .join("circle")
-                .attr("class", d => "p" + d.price.length)
+                .attr("class", d => "p" + d.price.length) // price class
                 .attr("cx", d => projection([d.longitude, d.latitude])[0])
                 .attr("cy", d => projection([d.longitude, d.latitude])[1])
                 .attr("r", 6)
-                .style("fill", "69b3a2")
+                .style("fill", "#0000ff")
+                // .style("fill", "69b3a2")
                 .style("opacity", 0)
-                // .attr("stroke", "#69b3a2")
-                // .attr("stroke-width", 3)
+                .attr("stroke", "#000000")
+                .attr("stroke-width", 2)
                 .attr("fill-opacity", .4)
                 .on("mouseover", mouseover)
                 .on("mousemove", mousemove)
@@ -125,7 +128,8 @@
 
                 svg.selectAll("circle")
                     .attr('transform', event.transform)
-                    .attr('r', 6 / event.transform.k); // Scale down zoom of circles
+                    .attr('r', 6 / event.transform.k) // Scale down zoom of circles
+                    .attr('stroke-width', 2 / event.transform.k); // Scale down zoom of circles
             }
 
             function update() {
