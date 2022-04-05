@@ -15,7 +15,8 @@
         // User
         long: -71.0678,
         lat: 42.3522,
-        name: "User"}
+        name: "User"
+    }
 
     // Create data for circles:
     // const markers = [
@@ -49,18 +50,18 @@
 
         // Load external data and boot
         d3.csv("https://raw.githubusercontent.com/DS4200-S22/final-project-bar-hopper/main/data/final_main_data.csv").then(function(main_data) {
-            var presets = {
+            let presets = {
                 zoom: 20,
                 userSize: 10,
                 rangeSize: 100
             }
 
 
-            var albersProjection = d3.geoAlbers()
-                .scale(190000*presets.zoom)
-                .rotate([71.057, 42.313-user.lat])
-                .center([user.long+71.057, 42.313])
-                .translate([width/2, height/2]);
+            let albersProjection = d3.geoAlbers()
+                .scale(190000 * presets.zoom)
+                .rotate([71.057, 42.313 - user.lat])
+                .center([user.long + 71.057, 42.313])
+                .translate([width / 2, height / 2]);
             // Filter data
             // data.features = data.features.filter(d => d.properties.name == "France")
 
@@ -99,7 +100,7 @@
                 }
             }
 
-            var mousemove = function(event, d) {
+            let mousemove = function(event, d) {
                 // console.log("move")
                 tooltip
                     .html("This establishment is: " + d.name + "<br> Price: " + d.price + "<br> Rating: " + d.rating + "<br>")
@@ -108,14 +109,14 @@
             }
 
             // A function that change this tooltip when the leaves a point: just need to set opacity to 0 again
-            var mouseleave = function(event, d) {
+            let mouseleave = function(event, d) {
                 // console.log("leave")
                 tooltip
                     .transition()
                     .duration(200)
                     .style("opacity", 0)
             }
-            
+
 
             // Add circles:
             svg
@@ -138,7 +139,7 @@
                 .on("mouseleave", mouseleave);
 
 
-            var zoom = d3.zoom()
+            let zoom = d3.zoom()
                 .scaleExtent([0.5, 16])
                 .on('zoom', updateChart);
 
@@ -155,65 +156,65 @@
                     .attr('transform', event.transform)
                     .attr('r', 6 / event.transform.k) // Scale down zoom of circles
                     .attr('stroke-width', 2 / event.transform.k); // Scale down zoom of circles
-                
+
                 svg.selectAll('#user')
                     .attr('transform', event.transform)
                     .attr('r', presets.userSize / event.transform.k) // Scale down zoom of circles
                     .attr('stroke-width', 2 / event.transform.k); // Scale down zoom of circles
-                
+
                 svg.selectAll('#range')
                     .attr('transform', event.transform)
                     // .attr('r', presets.rangeSize / event.transform.k) // Scale down zoom of circles
                     .attr('stroke-width', 2 / event.transform.k); // Scale down zoom of circles
             }
-            
+
 
             // add markers
             svg.append("circle")
-            .attr("id", "user")
-            // .attr("cx", albersProjection([user.long, user.lat]))
-            // .attr("cy", albersProjection([user.long, user.lat]))
-            .attr("cx", albersProjection([user.long, user.lat])[0])
-            .attr("cy", albersProjection([user.long, user.lat])[1])
-            .attr("r", presets.userSize)
-            .style("fill", "red")
-            .style("opacity", 1)
-            .attr("stroke", "#8c0315")
-            .attr("stroke-width", 2)
-            .attr("fill-opacity", .4);
+                .attr("id", "user")
+                // .attr("cx", albersProjection([user.long, user.lat]))
+                // .attr("cy", albersProjection([user.long, user.lat]))
+                .attr("cx", albersProjection([user.long, user.lat])[0])
+                .attr("cy", albersProjection([user.long, user.lat])[1])
+                .attr("r", presets.userSize)
+                .style("fill", "red")
+                .style("opacity", 1)
+                .attr("stroke", "#8c0315")
+                .attr("stroke-width", 2)
+                .attr("fill-opacity", .4);
 
-            
+
             // add markers
             svg.append("circle")
-            .attr("id", "range")
-            // .attr("cx", albersProjection([user.long, user.lat]))
-            // .attr("cy", albersProjection([user.long, user.lat]))
-            .attr("cx", albersProjection([user.long, user.lat])[0])
-            .attr("cy", albersProjection([user.long, user.lat])[1])
-            .attr("r", 100)
-            .style("fill", "lightgreen")
-            .style("opacity", 1)
-            .attr("stroke", "#0b9e35")
-            .attr("stroke-width", 2)
-            .attr("fill-opacity", .4);
+                .attr("id", "range")
+                // .attr("cx", albersProjection([user.long, user.lat]))
+                // .attr("cy", albersProjection([user.long, user.lat]))
+                .attr("cx", albersProjection([user.long, user.lat])[0])
+                .attr("cy", albersProjection([user.long, user.lat])[1])
+                .attr("r", 100)
+                .style("fill", "lightgreen")
+                .style("opacity", 1)
+                .attr("stroke", "#0b9e35")
+                .attr("stroke-width", 2)
+                .attr("fill-opacity", .4);
 
 
 
             // make lines between points
 
-            // var thisData = {
+            // let thisData = {
             //     x1: -71.0678,
             //     y1: 42.3552,
             //     x2: -71.0892,
             //     y2: 42.3398
             //   };
-            // var link = svg.selectAll(".link")
+            // let link = svg.selectAll(".link")
             //     .data(thisData.links)
             //     .enter().append("line")
             //     .attr("class", "link")
             //     .style('stroke','green')
             //     .style("stroke-width", 5000000);
-            
+
             // link.attr("x1", function(d) { console.log(d); return d.x1; })
             //     .attr("y1", function(d) { return d.y1; })
             //     .attr("x2", function(d) { return d.x2; })

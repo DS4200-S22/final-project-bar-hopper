@@ -87,7 +87,7 @@
                 .style("top", (event.pageY - 45) + "px")
         }
 
-        var mouseleave = function(d) {
+        let mouseleave = function(d) {
             tooltip
                 .transition()
                 .duration(300)
@@ -121,8 +121,8 @@
         // A function that updates the chart when the user zoom and thus new boundaries are available
         function updateChart({ transform }) {
             // recover the new scale
-            var newX = transform.rescaleX(xScale);
-            var newY = transform.rescaleY(yScale);
+            let newX = transform.rescaleX(xScale);
+            let newY = transform.rescaleY(yScale);
 
             // update axes with these new boundaries
             xAxis.call(d3.axisBottom(newX).tickSize(-innerHeight))

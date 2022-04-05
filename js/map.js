@@ -77,7 +77,7 @@
                 }
             }
 
-            var mousemove = function(event, d) {
+            let mousemove = function(event, d) {
                 // console.log("move")
                 tooltip
                     .html("This establishment is: " + d.name + "<br> Price: " + d.price + "<br> Rating: " + d.rating + "<br>")
@@ -86,7 +86,7 @@
             }
 
             // A function that change this tooltip when the leaves a point: just need to set opacity to 0 again
-            var mouseleave = function(event, d) {
+            let mouseleave = function(event, d) {
                 // console.log("leave")
                 tooltip
                     .transition()
@@ -113,7 +113,7 @@
                 .on("mousemove", mousemove)
                 .on("mouseleave", mouseleave)
 
-            var zoom = d3.zoom()
+            let zoom = d3.zoom()
                 .scaleExtent([0.5, 16])
                 .on('zoom', updateChart);
 
