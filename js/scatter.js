@@ -1,4 +1,5 @@
 (function () {
+    // Reference: https://observablehq.com/@d3/zoomable-scatterplot
     const margin = { top: 25, right: 25, bottom: 15, left: 15 };
     const width = 600;
     const height = 800;
@@ -117,7 +118,7 @@
         function zoomed({ transform }) {
             const zx = transform.rescaleX(xScale).interpolate(d3.interpolateRound);
             const zy = transform.rescaleY(yScale).interpolate(d3.interpolateRound);
-            gDot.attr("transform", transform).attr("stroke-width", 5 / transform.k);
+            gDot.attr("transform", transform).attr("stroke-width", 8 / transform.k);
             gx.call(xAxis, zx);
             gy.call(yAxis, zy);
             gGrid.call(grid, zx, zy);
