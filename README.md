@@ -102,3 +102,8 @@ https://d3-graph-gallery.com/graph/backgroundmap_changeprojection.html
 https://d3-graph-gallery.com/graph/bubblemap_basic.html
 ### Tooltips on map
 https://d3-graph-gallery.com/graph/bubblemap_tooltip.html
+## Checkboxes to Filter Data
+https://bl.ocks.org/johnnygizmo/531991a77047112b7ca89f78b840fba5
+https://d3-graph-gallery.com/graph/bubblemap_buttonControl.html
+## D3 Zoom scale
+https://stackoverflow.com/questions/15147136/how-to-know-the-current-zoom-level-in-d3-js#:~:text=To%20retrieve%20the%20zoom%20state,zoomTransform%20for%20a%20given%20node.
