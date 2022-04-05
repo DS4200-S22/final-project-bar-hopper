@@ -1,5 +1,5 @@
 // dummy data representing the hours that a bar is open
-(function () {
+(function() {
     const barHours = [
         { open: "2022-03-28 10:00:00", close: "2022-03-28 20:00:00" },
         { open: "2022-03-29 6:00:00", close: "2022-03-29 15:00:00" },
@@ -13,8 +13,9 @@
     // set up date range axis
     let firstDay = d3.timeDay.floor(new Date(barHours[0].open));
     let lastDay = d3.timeDay.ceil(new Date(barHours[barHours.length - 1].close));
-    let dateRange = [d3.min(barHours, function (d) { return d3.timeDay.floor(new Date(d.open)) }),
-    d3.max(barHours, function (d) { return d3.timeDay.ceil(new Date(d.close)) })];
+    let dateRange = [d3.min(barHours, function(d) { return d3.timeDay.floor(new Date(d.open)) }),
+        d3.max(barHours, function(d) { return d3.timeDay.ceil(new Date(d.close)) })
+    ];
 
     // intital margin and dimension setup
     const width = 900;
@@ -48,7 +49,8 @@
 
         let fullScale = d3.scaleTime()
             .domain([d3.timeHour(new Date(2014, 0, 1, 0, 0, 0)),
-            d3.timeHour(new Date(2014, 0, 2, 0, 0, 0)),])
+                d3.timeHour(new Date(2014, 0, 2, 0, 0, 0)),
+            ])
             .range([0, width]);
 
         // x axis
@@ -73,18 +75,16 @@
             .enter()
             .append("rect")
             .attr("class", "time-bar")
-            .attr("x", function (d) {
-                var h = hourFormatter(new Date(d.open)).split(":"), //changes datum from string, to proper Date Object, back to hour string and splits
+            .attr("x", function(d) {
+                let h = hourFormatter(new Date(d.open)).split(":"), //changes datum from string, to proper Date Object, back to hour string and splits
                     xh = parseFloat(h[0]) + parseFloat(h[1] / 60); //time (hour and minute) as decimal
-                return xScale(xh);
-                ;
+                return xScale(xh);;
             })
-            .attr("y", function (d) { return yScale(d3.timeDay.floor(new Date(d.open))) }
-            )
-            .attr("width", function (d) {
-                var hstart = new Date(d.open),
+            .attr("y", function(d) { return yScale(d3.timeDay.floor(new Date(d.open))) })
+            .attr("width", function(d) {
+                let hstart = new Date(d.open),
                     hstop = new Date(d.close);
-                return xScale((hstop - hstart) / 3600000);	//date operations return a timestamp in miliseconds, divide to convert to hours
+                return xScale((hstop - hstart) / 3600000); //date operations return a timestamp in miliseconds, divide to convert to hours
             })
             .attr("height", 30)
             .attr("rx", 10)
