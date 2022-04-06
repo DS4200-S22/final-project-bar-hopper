@@ -1,4 +1,4 @@
-,id,hours_type,mon_start,mon_end,mon_overnight,tues_start,tues_end,tues_overnight,wed_start,wed_end,wed_overnight,thurs_start,thurs_start.1,thurs_overnight,fri_start,fri_end,fri_overnight,sat_start,sat_end,sat_overnight,sun_start,sun_end,sun_overnight
+,id,hours_type,mon_start,mon_end,mon_overnight,tues_start,tues_end,tues_overnight,wed_start,wed_end,wed_overnight,thurs_start,thurs_end,thurs_overnight,fri_start,fri_end,fri_overnight,sat_start,sat_end,sat_overnight,sun_start,sun_end,sun_overnight
 0,2u_w3rthRzR2uEihW5BC4A,REGULAR,1200.0,2200.0,False,1200.0,2200.0,False,1200.0,2200.0,False,1200.0,2200.0,False,1200.0,2230.0,False,1200.0,2230.0,False,1200.0,2200.0,False
 1,AGR_kBvN__I7aTl0rBywAg,REGULAR,1130.0,2200.0,False,1130.0,2200.0,False,1130.0,2200.0,False,1130.0,2200.0,False,1130.0,2300.0,False,1100.0,2300.0,False,1100.0,2200.0,False
 2,NYa-JphaaB41ElGsb3iawA,REGULAR,1700.0,2100.0,False,1700.0,2100.0,False,1700.0,2100.0,False,1700.0,2100.0,False,1700.0,2200.0,False,1700.0,2200.0,False,1700.0,2100.0,False
