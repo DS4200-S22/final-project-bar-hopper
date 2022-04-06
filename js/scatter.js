@@ -37,7 +37,7 @@
         });
         console.log(xMin)
         const xScale = d3.scaleLinear()
-            .domain([xMin, xMax])
+            .domain([xMin - 0.5, xMax])
             .range([margin.left, width - margin.right]);
         xAxis = (g, x) => g
             .attr("transform", `translate(0,${height - margin.bottom})`)
