@@ -86,19 +86,3 @@ function bearing(location1, location2) {
             .style('fill', 'orange');
     });
 })();
-
-const buLocation = {
-    lat: 42.350498,
-    log: -71.105400,
-};
-
-const neuLocation = {
-    lat: 42.338978,
-    log: -71.087463,
-}
-
-const testLocation = {
-    lat: 42.34884,
-    log: -71.08625,
-}
-console.log(bearing(neuLocation, testLocation));
