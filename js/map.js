@@ -95,6 +95,14 @@
                     .style("opacity", 0)
             }
 
+            // Setting up channels
+            const color = {
+                '$': '#eb4034',
+                '$$': '#1c03fc',
+                '$$$': '#6eeb34',
+                '$$$$': '#34ebdc',
+            }
+
             // Add circles:
             svg
                 .selectAll("myCircles")
@@ -105,8 +113,8 @@
                 .attr("cx", d => projection([d.longitude, d.latitude])[0])
                 .attr("cy", d => projection([d.longitude, d.latitude])[1])
                 .attr("r", 6)
-                .style("fill", "#0000ff")
-                // .style("fill", "69b3a2")
+                // .style("fill", "#0000ff")
+                .style('fill', d => color[d['price']] || 'black')
                 .style("opacity", 0)
                 .attr("stroke", "#000000")
                 .attr("stroke-width", 2)
@@ -157,11 +165,6 @@
                     if (cb.property("checked")) {
                         svg.selectAll("." + rating).style("opacity", 1)
                     }
-
-                    //         // Otherwise I hide it
-                    //     } else {
-                    //         svg.selectAll("." + rating).style("opacity", 0)
-                    //     }
                 });
             }
         });
