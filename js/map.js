@@ -1,5 +1,5 @@
 // set width and height of svg
-(function() {
+(function () {
     const width = 800
     const height = 600
 
@@ -67,7 +67,7 @@
 
             // A function that change this tooltip when the user hover a point.
             // Its opacity is set to 1: we can now see it. Plus it set the text and position of tooltip depending on the datapoint (d)
-            const mouseover = function(event, d) {
+            const mouseover = function (event, d) {
                 // console.log("over")
 
                 // If the current point is visible, show tooltip

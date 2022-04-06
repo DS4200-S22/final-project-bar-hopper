@@ -9,17 +9,24 @@
     position: absolute;
 }
 
-.legend {
-    margin-left: 25%;
+.circle,
+.label {
+    display: inline-block;
 }
 
-.box,
-.label{
-    display:inline-block;
+.circle {
+    width: 10px;
+    height: 10px;
+    margin: 0px 10px;
+    border-radius: 10px;
 }
 
-.box{
-  width:10px;
-  height:10px;
-  margin:0px 10px;
+#vis-scatter-container {
+    display: flex;
+    flex-direction: row;
+}
+
+#legend {
+    display: flex;
+    flex-direction: column;
 }
