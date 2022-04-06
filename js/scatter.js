@@ -1,4 +1,4 @@
-(function () {
+(function() {
     // Reference: https://observablehq.com/@d3/zoomable-scatterplot
     const margin = { top: 25, right: 25, bottom: 15, left: 15 };
     const width = 600;
@@ -86,16 +86,16 @@
             .append('div')
             .style('opacity', 0)
             .attr('class', 'tooltip')
-        const mouseover = function (d) {
+        const mouseover = function(d) {
             tooltip.style('opacity', 1);
         }
-        const mousemove = function (event, d) {
+        const mousemove = function(event, d) {
             tooltip
                 .html(`Review Count: ${d['review_count' || 'unknown']}, Review Rating: ${d['rating'] || 'unknown'}, Price: ${d['price'] || 'unknown'}`)
                 .style("left", (event.pageX + 10) + "px")
                 .style("top", (event.pageY - 45) + "px")
         }
-        var mouseleave = function (d) {
+        let mouseleave = function(d) {
             tooltip
                 .transition()
                 .duration(300)
@@ -117,6 +117,7 @@
         const zoom = d3.zoom()
             .scaleExtent([0.5, 30])
             .on("zoom", zoomed);
+
         function zoomed({ transform }) {
             const zx = transform.rescaleX(xScale).interpolate(d3.interpolateRound);
             const zy = transform.rescaleY(yScale).interpolate(d3.interpolateRound);
@@ -153,8 +154,8 @@
 
         const resetZoom = () => {
             svg.transition()
-            .duration(750)
-            .call(zoom.transform, d3.zoomIdentity);
+                .duration(750)
+                .call(zoom.transform, d3.zoomIdentity);
         }
 
         document.getElementById("vis-scatter-zoom-reset").addEventListener('click', resetZoom);
