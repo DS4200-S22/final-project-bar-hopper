@@ -69,7 +69,7 @@
             // A function that change this tooltip when the user hover a point.
             // Its opacity is set to 1: we can now see it. Plus it set the text and position of tooltip depending on the datapoint (d)
             const mouseover = function(event, d) {
-                // console.log("over")
+                console.log("over")
 
                 // If the current point is visible, show tooltip
                 if (d3.select(this).style("opacity") != 0) {
@@ -79,7 +79,7 @@
             }
 
             let mousemove = function(event, d) {
-                // console.log("move")
+                console.log("move")
                 tooltip
                     .html("This establishment is: " + d.name + "<br> Price: " + d.price + "<br> Rating: " + d.rating + "<br>")
                     .style("left", event.pageX + "px") // It is important to put the +90: other wise the tooltip is exactly where the point is an it creates a weird effect
@@ -88,7 +88,7 @@
 
             // A function that change this tooltip when the leaves a point: just need to set opacity to 0 again
             let mouseleave = function(event, d) {
-                // console.log("leave")
+                console.log("leave")
                 tooltip
                     .transition()
                     .duration(200)
@@ -122,6 +122,13 @@
                 .on("mouseover", mouseover)
                 .on("mousemove", mousemove)
                 .on("mouseleave", mouseleave)
+                .on("click", function(event, d) {
+                    // var url = "http://somelink.com/link.php?id=";
+                    // url += d.link_id;
+                    //$(location).attr('href', url);
+                    window.location = d.url;
+                    // console.log(d.url)
+                });
 
             let zoom = d3.zoom()
                 .scaleExtent([0.5, 16])
