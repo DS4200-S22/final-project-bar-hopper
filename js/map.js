@@ -39,7 +39,8 @@
             // Filter data
             // data.features = data.features.filter(d => d.properties.name == "France")
 
-            d3.selectAll(".myCheckbox").on("change", update);
+            d3.selectAll(".price").on("change", update);
+            d3.selectAll(".rating").on("change", update);
             update()
 
             // Draw the map
@@ -99,7 +100,8 @@
                 .selectAll("myCircles")
                 .data(main_data)
                 .join("circle")
-                .attr("class", d => "p" + d.price.length) // price class
+                .attr("class", d => "p" + d.price.length + " r" + d.rating * 10) // price class
+                // .attr("rating", d => d.rating) // rating class
                 .attr("cx", d => projection([d.longitude, d.latitude])[0])
                 .attr("cy", d => projection([d.longitude, d.latitude])[1])
                 .attr("r", 6)
@@ -133,8 +135,8 @@
             }
 
             function update() {
-                // Get checkbox dataar
-                d3.selectAll(".myCheckbox").each(function(d) {
+                // Get checkbox data
+                d3.selectAll(".price").each(function(d) {
                     cb = d3.select(this);
                     price_level = "p" + cb.property("value")
                         // If the box is checked, I show the group
@@ -145,6 +147,21 @@
                     } else {
                         svg.selectAll("." + price_level).style("opacity", 0)
                     }
+                });
+
+                // Get checkbox data
+                d3.selectAll(".rating").each(function(d) {
+                    cb = d3.select(this);
+                    rating = "r" + cb.property("value") * 10
+                        //         // If the box is checked, I show the group
+                    if (cb.property("checked")) {
+                        svg.selectAll("." + rating).style("opacity", 1)
+                    }
+
+                    //         // Otherwise I hide it
+                    //     } else {
+                    //         svg.selectAll("." + rating).style("opacity", 0)
+                    //     }
                 });
             }
         });
