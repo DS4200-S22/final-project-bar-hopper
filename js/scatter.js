@@ -26,15 +26,18 @@
         .attr('stroke-linecap', 'round');
 
     d3.csv('https://raw.githubusercontent.com/DS4200-S22/final-project-bar-hopper/main/data/final_main_data.csv').then(data => {
-
         // Setting up x-axis
         const xTick = 11;
         const xKey = 'Review Rating';
         let xMax = d3.max(data, d => {
             return parseInt(d['rating'])
         });
+        let xMin = d3.min(data, d => {
+            return parseInt(d['rating'])
+        });
+        console.log(xMin)
         const xScale = d3.scaleLinear()
-            .domain([0, xMax])
+            .domain([xMin, xMax])
             .range([margin.left, width - margin.right]);
         xAxis = (g, x) => g
             .attr("transform", `translate(0,${height - margin.bottom})`)
@@ -103,10 +106,9 @@
         gDot.selectAll("path")
             .data(data)
             .join("path")
-            .attr("d", d => `M${xScale(d['rating'])},${yScale(d['review_count'])}h0`)
-            .attr("stroke", d => color[d['price']])
+            .attr("d", d => `M${xScale(d['rating'] || 0)},${yScale(d['review_count'] || 0)}h0`)
+            .attr("stroke", d => color[d['price']] || 'black')
             .attr('r', 8)
-            .attr('opacity', 0.5)
             .on("mouseover", mouseover)
             .on("mousemove", mousemove)
             .on("mouseleave", mouseleave);
@@ -148,6 +150,14 @@
                 )
                 .attr("y1", d => 0.5 + y(d))
                 .attr("y2", d => 0.5 + y(d)));
+
+        const resetZoom = () => {
+            svg.transition()
+            .duration(750)
+            .call(zoom.transform, d3.zoomIdentity);
+        }
+
+        document.getElementById("vis-scatter-zoom-reset").addEventListener('click', resetZoom);
 
         svg.call(zoom).call(zoom.transform, d3.zoomIdentity)
     });
