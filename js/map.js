@@ -82,8 +82,8 @@
                 console.log("move")
                 tooltip
                     .html("This establishment is: " + d.name + "<br> Price: " + d.price + "<br> Rating: " + d.rating + "<br>")
-                    .style("left", event.pageX + "px") // It is important to put the +90: other wise the tooltip is exactly where the point is an it creates a weird effect
-                    .style("top", event.pageY + "px")
+                    .style("left", (event.pageX + 10) + "px")
+                    .style("top", (event.pageY - 45) + "px")
             }
 
             // A function that change this tooltip when the leaves a point: just need to set opacity to 0 again
