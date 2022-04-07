@@ -123,9 +123,6 @@
                 .on("mousemove", mousemove)
                 .on("mouseleave", mouseleave)
                 .on("click", function(event, d) {
-                    // var url = "http://somelink.com/link.php?id=";
-                    // url += d.link_id;
-                    //$(location).attr('href', url);
                     window.location = d.url;
                     // console.log(d.url)
                 });
