@@ -11,22 +11,6 @@
 
     let g = svg.append("g");
 
-    // // Create data for circles:
-    // const markers = [{
-    //         // Northeastern
-    //         long: -71.0892,
-    //         lat: 42.3398,
-    //         name: "Northeastern University"
-    //     },
-    //     {
-    //         // Boston Common
-    //         long: -71.0668,
-    //         lat: 42.3552,
-    //         name: "Boston Common"
-    //     }
-    // ];
-
-
     d3.json("https://raw.githubusercontent.com/DS4200-S22/final-project-bar-hopper/main/data/boston.geojson").then(function(data) {
 
         // Load external data and boot
