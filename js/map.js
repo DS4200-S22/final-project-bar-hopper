@@ -69,7 +69,7 @@
             // A function that change this tooltip when the user hover a point.
             // Its opacity is set to 1: we can now see it. Plus it set the text and position of tooltip depending on the datapoint (d)
             const mouseover = function(event, d) {
-                console.log("over")
+                // console.log("over", event.target, this)
 
                 // If the current point is visible, show tooltip
                 if (d3.select(this).style("opacity") != 0) {
@@ -79,7 +79,7 @@
             }
 
             let mousemove = function(event, d) {
-                console.log("move")
+                // console.log("move")
                 tooltip
                     .html("This establishment is: " + d.name + "<br> Price: " + d.price + "<br> Rating: " + d.rating + "<br>")
                     .style("left", (event.pageX + 10) + "px")
@@ -88,7 +88,7 @@
 
             // A function that change this tooltip when the leaves a point: just need to set opacity to 0 again
             let mouseleave = function(event, d) {
-                console.log("leave")
+                // console.log("leave")
                 tooltip
                     .transition()
                     .duration(200)
@@ -104,12 +104,12 @@
             }
 
             // Add circles:
-            svg
+            myCircles = svg
                 .selectAll("myCircles")
                 .data(main_data)
                 .join("circle")
-                .attr("class", d => "p" + d.price.length + " r" + d.rating * 10) // price class
-                // .attr("rating", d => d.rating) // rating class
+                .attr("class", d => "p" + d.price.length + " r" + d.rating * 10) // price and rating classes
+                .attr("id", (d) => d.id) // unique id
                 .attr("cx", d => projection([d.longitude, d.latitude])[0])
                 .attr("cy", d => projection([d.longitude, d.latitude])[1])
                 .attr("r", 6)
@@ -135,6 +135,47 @@
                 .on('zoom', updateChart);
 
             svg.call(zoom);
+
+            // // Define a brush
+            // brush1 = d3.brush().extent([
+            //     [0, 0],
+            //     [width, height]
+            // ]);
+
+            // // Add brush1 to svg1
+            // svg.call(brush1
+            //     .on("start", clear)
+            //     .on("brush", updateChart1));
+
+
+            // // Call to removes existing brushes
+            // function clear() {
+            //     // Clear existing brush from svg
+            //     svg.call(brush1.move, null);
+            // }
+
+            // // Call when Scatterplot1 is brushed
+            // function updateChart1(brushEvent) {
+
+            //     // Find coordinates of brushed region
+            //     let coordinates = d3.brushSelection(this);
+
+            //     // Give bold outline to all points within the brush region in Scatterplot1
+            //     myCircles.classed("selected", function(d) {
+            //         return isBrushed(coordinates, 0, 0)
+            //     })
+            // }
+
+            // // Find dots within the brushed region
+            // function isBrushed(brush_coords, cx, cy) {
+            //     if (brush_coords === null) return;
+
+            //     var x0 = brush_coords[0][0],
+            //         x1 = brush_coords[1][0],
+            //         y0 = brush_coords[0][1],
+            //         y1 = brush_coords[1][1];
+            //     return x0 <= cx && cx <= x1 && y0 <= cy && cy <= y1; // This return TRUE or FALSE depending on if the points is in the selected area
+            // }
 
 
             // A function that updates the chart when the user zoom and thus new boundaries are available
