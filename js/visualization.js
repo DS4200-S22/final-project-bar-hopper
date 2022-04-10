@@ -107,7 +107,10 @@
 
             // use days for y axis rather than dates
             let yScaleDays = d3.scaleBand()
-                .domain(data.map(function(d) { return d.day }))
+                .domain(data.map(function(d) {
+                    console.log(d.day)
+                    return d.day
+                }))
                 .range([0, height])
 
             let fullScale = d3.scaleTime()
