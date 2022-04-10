@@ -27,7 +27,7 @@
     const yAxisFormatter = d3.timeFormat("%m/%d");
 
     // begin creating time svg
-    const svg_time = d3.select("#vis-timechart")
+    let svg_time = d3.select("#vis-timechart")
         .append("svg")
         .attr("width", width_time + margin.right + margin.left)
         .attr("height", height_time + margin.top + margin.bottom)
@@ -144,7 +144,19 @@
             //     .attr('transform', 'translate(' + margin.left + ', ' + margin.top + ')');
 
             // function that handles creating the graph based on data given
-            function createTimeGraph(merged_data) {
+            function createTimeGraph() {
+                // Delete old time chart and replace with new
+                d3.select("#vis-timechart").selectAll("svg").remove()
+
+                svg_time = d3.select("#vis-timechart")
+                    .append("svg")
+                    .attr("width", width_time + margin.right + margin.left)
+                    .attr("height", height_time + margin.top + margin.bottom)
+                    .append("g")
+                    .attr('transform', 'translate(' + margin.left + ', ' + margin.top + ')');
+
+
+
                 const convertToValidTimeString = (input) => {
                     let toReturn
                     toReturn = input.substring(0, 2)
@@ -156,7 +168,7 @@
 
                 // the actual date is irrelivent, only intiallized because d3 works better with date()
                 // obects, will only display times and the day string
-                const barHours = [{
+                barHours = [{
                         day: 'Mon',
                         open: dataFormatter(convertToValidTimeString(currentlyUsing.mon_start)),
                         close: dataFormatter(convertToValidTimeString(currentlyUsing.mon_end))
@@ -234,7 +246,7 @@
 
                 // use days for y axis rather than dates
                 let yScaleDays = d3.scaleBand()
-                    .domain(merged_data.map(function(d) { return d.day }))
+                    .domain(barHours.map(function(d) { return d.day }))
                     .range([0, height_time])
 
                 let fullScale = d3.scaleTime()
@@ -250,14 +262,6 @@
                         .scale(fullScale)
                         .tickFormat(d3.timeFormat("%H:%M")));
 
-                // y axis
-                // svg.append("g")
-                //     .call(d3.axisLeft(yScale)
-                //         .scale(yScale)
-                //         .tickFormat((interval, i) => {
-                //             return i % 2 !== 0 ? " " : yAxisFormatter(interval);
-                //         }));
-
                 // y axis new
                 // uses days instead of dates
                 svg_time.append("g")
@@ -266,7 +270,7 @@
                 // create actual bar graphs
                 svg_time.append("g")
                     .selectAll("rect")
-                    .data(merged_data)
+                    .data(barHours)
                     .enter()
                     .append("rect")
                     .attr("class", "time-bar")
@@ -389,7 +393,7 @@
                     // Pass data to time chart
                     currentlyUsing = d;
                     console.log(currentlyUsing);
-                    createTimeGraph(barHours);
+                    createTimeGraph();
                 });
 
             let zoom = d3.zoom()
@@ -397,6 +401,7 @@
                 .on('zoom', updateChart);
 
             svg.call(zoom);
+
 
             // A function that updates the chart when the user zoom and thus new boundaries are available
             function updateChart(event) {
