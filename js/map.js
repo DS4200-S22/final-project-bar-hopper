@@ -11,8 +11,35 @@
 
     let g = svg.append("g");
 
-    // Data point for time chart
+
+
+
+    // intital margin and dimension setup
+    const width_time = 900;
+    const height_time = 450;
+    const margin = { left: 50, right: 50, bottom: 50, top: 50 };
+
+    // set up d3 time formatting
+    // delete if still unecessary after next pm
+    const dayFormatter = d3.timeFormat("%w");
+    const weekFormatter = d3.timeFormat("%U");
+    const hourFormatter = d3.timeFormat("%X");
+    const yAxisFormatter = d3.timeFormat("%m/%d");
+
+    // begin creating time svg
+    const svg_time = d3.select("#vis-timechart")
+        .append("svg")
+        .attr("width", width_time + margin.right + margin.left)
+        .attr("height", height_time + margin.top + margin.bottom)
+        .append("g")
+        .attr('transform', 'translate(' + margin.left + ', ' + margin.top + ')');
+
+
+
+
+    // Data for time chart
     let currentlyUsing;
+    let barHours;
 
     // // Create data for circles:
     // const markers = [{
@@ -33,9 +60,238 @@
     d3.json("https://raw.githubusercontent.com/DS4200-S22/final-project-bar-hopper/main/data/boston.geojson").then(function(data) {
 
         // Load external data and boot
-        d3.csv("https://raw.githubusercontent.com/DS4200-S22/final-project-bar-hopper/main/data/final_main_data.csv").then(function(main_data) {
+        d3.csv("https://raw.githubusercontent.com/DS4200-S22/final-project-bar-hopper/main/data/final_merged_data.csv").then(function(merged_data) {
 
-            // Set initial point for time chart data
+            currentlyUsing = merged_data[0]
+
+
+            // Time chart
+
+            // const convertToValidTimeString = (input) => {
+            //     let toReturn
+            //     toReturn = input.substring(0, 2)
+            //     return toReturn + ':' + input.substring(2, 4) + ':00'
+            // };
+
+            // // creates date object out of formatted time
+            // const dataFormatter = d3.timeParse('%H:%M:%S');
+
+            // // the actual date is irrelivent, only intiallized because d3 works better with date()
+            // // obects, will only display times and the day string
+            // const barHours = [{
+            //         day: 'Mon',
+            //         open: dataFormatter(convertToValidTimeString(currentlyUsing.mon_start)),
+            //         close: dataFormatter(convertToValidTimeString(currentlyUsing.mon_end))
+            //     },
+            //     {
+            //         day: 'Tues',
+            //         open: dataFormatter(convertToValidTimeString(currentlyUsing.tues_start)),
+            //         close: dataFormatter(convertToValidTimeString(currentlyUsing.tues_end))
+            //     },
+            //     {
+            //         day: 'Wed',
+            //         open: dataFormatter(convertToValidTimeString(currentlyUsing.wed_start)),
+            //         close: dataFormatter(convertToValidTimeString(currentlyUsing.wed_end))
+            //     },
+            //     {
+            //         day: 'Thurs',
+            //         open: dataFormatter(convertToValidTimeString(currentlyUsing.thurs_start)),
+            //         close: dataFormatter(convertToValidTimeString(currentlyUsing.thurs_end))
+            //     },
+            //     {
+            //         day: 'Fri',
+            //         open: dataFormatter(convertToValidTimeString(currentlyUsing.fri_start)),
+            //         close: dataFormatter(convertToValidTimeString(currentlyUsing.fri_end))
+            //     },
+            //     {
+            //         day: 'Sat',
+            //         open: dataFormatter(convertToValidTimeString(currentlyUsing.sat_start)),
+            //         close: dataFormatter(convertToValidTimeString(currentlyUsing.sat_end))
+            //     },
+            //     {
+            //         day: 'Sun',
+            //         open: dataFormatter(convertToValidTimeString(currentlyUsing.sun_start)),
+            //         close: dataFormatter(convertToValidTimeString(currentlyUsing.sun_end))
+            //     }
+            // ];
+
+            // // set up date range axis
+            // // delete if still unecessary after next pm
+            // let firstDay = d3.timeDay.floor(new Date(barHours[0].open));
+            // let lastDay = d3.timeDay.ceil(new Date(barHours[barHours.length - 1].close));
+            // let dateRange = [d3.min(barHours, function(d) { return d3.timeDay.floor(new Date(d.open)) }),
+            //     d3.max(barHours, function(d) { return d3.timeDay.ceil(new Date(d.close)) })
+            // ];
+
+            // // intital margin and dimension setup
+            // const width_time = 900;
+            // const height_time = 450;
+            // const margin = { left: 50, right: 50, bottom: 50, top: 50 };
+
+            // // set up d3 time formatting
+            // // delete if still unecessary after next pm
+            // const dayFormatter = d3.timeFormat("%w");
+            // const weekFormatter = d3.timeFormat("%U");
+            // const hourFormatter = d3.timeFormat("%X");
+            // const yAxisFormatter = d3.timeFormat("%m/%d");
+
+            // // begin creating svg
+            // const svg_time = d3.select("#vis-timechart")
+            //     .append("svg")
+            //     .attr("width", width_time + margin.right + margin.left)
+            //     .attr("height", height_time + margin.top + margin.bottom)
+            //     .append("g")
+            //     .attr('transform', 'translate(' + margin.left + ', ' + margin.top + ')');
+
+            // function that handles creating the graph based on data given
+            function createTimeGraph(merged_data) {
+                const convertToValidTimeString = (input) => {
+                    let toReturn
+                    toReturn = input.substring(0, 2)
+                    return toReturn + ':' + input.substring(2, 4) + ':00'
+                };
+
+                // creates date object out of formatted time
+                const dataFormatter = d3.timeParse('%H:%M:%S');
+
+                // the actual date is irrelivent, only intiallized because d3 works better with date()
+                // obects, will only display times and the day string
+                const barHours = [{
+                        day: 'Mon',
+                        open: dataFormatter(convertToValidTimeString(currentlyUsing.mon_start)),
+                        close: dataFormatter(convertToValidTimeString(currentlyUsing.mon_end))
+                    },
+                    {
+                        day: 'Tues',
+                        open: dataFormatter(convertToValidTimeString(currentlyUsing.tues_start)),
+                        close: dataFormatter(convertToValidTimeString(currentlyUsing.tues_end))
+                    },
+                    {
+                        day: 'Wed',
+                        open: dataFormatter(convertToValidTimeString(currentlyUsing.wed_start)),
+                        close: dataFormatter(convertToValidTimeString(currentlyUsing.wed_end))
+                    },
+                    {
+                        day: 'Thurs',
+                        open: dataFormatter(convertToValidTimeString(currentlyUsing.thurs_start)),
+                        close: dataFormatter(convertToValidTimeString(currentlyUsing.thurs_end))
+                    },
+                    {
+                        day: 'Fri',
+                        open: dataFormatter(convertToValidTimeString(currentlyUsing.fri_start)),
+                        close: dataFormatter(convertToValidTimeString(currentlyUsing.fri_end))
+                    },
+                    {
+                        day: 'Sat',
+                        open: dataFormatter(convertToValidTimeString(currentlyUsing.sat_start)),
+                        close: dataFormatter(convertToValidTimeString(currentlyUsing.sat_end))
+                    },
+                    {
+                        day: 'Sun',
+                        open: dataFormatter(convertToValidTimeString(currentlyUsing.sun_start)),
+                        close: dataFormatter(convertToValidTimeString(currentlyUsing.sun_end))
+                    }
+                ];
+
+                console.log(barHours)
+
+                // set up date range axis
+                // delete if still unecessary after next pm
+                let firstDay = d3.timeDay.floor(new Date(barHours[0].open));
+                let lastDay = d3.timeDay.ceil(new Date(barHours[barHours.length - 1].close));
+                let dateRange = [d3.min(barHours, function(d) { return d3.timeDay.floor(new Date(d.open)) }),
+                    d3.max(barHours, function(d) { return d3.timeDay.ceil(new Date(d.close)) })
+                ];
+
+                // // intital margin and dimension setup
+                // const width_time = 900;
+                // const height_time = 450;
+                // const margin = { left: 50, right: 50, bottom: 50, top: 50 };
+
+                // // set up d3 time formatting
+                // // delete if still unecessary after next pm
+                // const dayFormatter = d3.timeFormat("%w");
+                // const weekFormatter = d3.timeFormat("%U");
+                // const hourFormatter = d3.timeFormat("%X");
+                // const yAxisFormatter = d3.timeFormat("%m/%d");
+
+                // // begin creating svg
+                // const svg_time = d3.select("#vis-timechart")
+                //     .append("svg")
+                //     .attr("width", width_time + margin.right + margin.left)
+                //     .attr("height", height_time + margin.top + margin.bottom)
+                //     .append("g")
+                //     .attr('transform', 'translate(' + margin.left + ', ' + margin.top + ')');
+
+                let xScale = d3.scaleTime()
+                    .domain([0, 24])
+                    .range([0, width_time]);
+
+                // delete if no longer using after next pm
+                let yScale = d3.scaleTime()
+                    .domain(dateRange)
+                    .range([0, height_time]);
+
+                // use days for y axis rather than dates
+                let yScaleDays = d3.scaleBand()
+                    .domain(merged_data.map(function(d) { return d.day }))
+                    .range([0, height_time])
+
+                let fullScale = d3.scaleTime()
+                    .domain([d3.timeHour(new Date(2014, 0, 1, 0, 0, 0)),
+                        d3.timeHour(new Date(2014, 0, 2, 0, 0, 0)),
+                    ])
+                    .range([0, width_time]);
+
+                // x axis
+                svg_time.append("g")
+                    .attr("transform", "translate(0," + height_time + ")")
+                    .call(d3.axisBottom(xScale)
+                        .scale(fullScale)
+                        .tickFormat(d3.timeFormat("%H:%M")));
+
+                // y axis
+                // svg.append("g")
+                //     .call(d3.axisLeft(yScale)
+                //         .scale(yScale)
+                //         .tickFormat((interval, i) => {
+                //             return i % 2 !== 0 ? " " : yAxisFormatter(interval);
+                //         }));
+
+                // y axis new
+                // uses days instead of dates
+                svg_time.append("g")
+                    .call(d3.axisLeft(yScaleDays))
+
+                // create actual bar graphs
+                svg_time.append("g")
+                    .selectAll("rect")
+                    .data(merged_data)
+                    .enter()
+                    .append("rect")
+                    .attr("class", "time-bar")
+                    .attr("x", function(d) {
+                        let h = hourFormatter(new Date(d.open)).split(":"), // changes datum from string, to proper Date Object, back to hour string and splits
+                            xh = parseFloat(h[0]) + parseFloat(h[1] / 60); // time (hour and minute) as decimal
+                        return xScale(xh);;
+                    })
+                    //.attr("y", function (d) { return yScale(d3.timeDay.floor(new Date(d.open))) })
+                    .attr("y", function(d) { return yScaleDays(d.day) })
+                    .attr("width", function(d) {
+                        let hstart = new Date(d.open),
+                            hstop = new Date(d.close);
+                        return xScale((hstop - hstart) / 3600000); // divide to convert to hours
+                    })
+                    .attr("height", 30)
+                    .attr("rx", 10)
+                    .attr("ry", 10)
+            };
+
+
+
+
+
+
 
             // Map and projection
             const projection = d3.geoMercator()
@@ -111,7 +367,7 @@
             // Add circles:
             myCircles = svg
                 .selectAll("myCircles")
-                .data(main_data)
+                .data(merged_data)
                 .join("circle")
                 .attr("class", d => "p" + d.price.length + " r" + d.rating * 10) // price and rating classes
                 .attr("id", (d) => d.id) // unique id
@@ -129,8 +385,11 @@
                 .on("mouseleave", mouseleave)
                 .on("click", function(event, d) {
                     // Redirect to bar's yelp page
-                    window.location = d.url;
+                    // window.location = d.url;
                     // Pass data to time chart
+                    currentlyUsing = d;
+                    console.log(currentlyUsing);
+                    createTimeGraph(barHours);
                 });
 
             let zoom = d3.zoom()
@@ -177,162 +436,6 @@
                 });
             }
         });
-    });
-
-    d3.csv('https://raw.githubusercontent.com/DS4200-S22/final-project-bar-hopper/main/data/final_hours_data.csv').then(data => {
-        // change this later when interactivity is added
-        // using just the first line of data for now because this chart relies on a selection to be made
-        // which hasnt yet been implemented (writing at the time of pm-07).
-        // the format this was developed in makes for easy refactoring when a bar will be selected
-        // in the finished product
-        currentlyUsing = data[0];
-
-        // will need to be adjusted later to account for places open overnight
-        // for right now just cap it at midnight
-        const convertToValidTimeString = (input) => {
-            let toReturn
-            toReturn = input.substring(0, 2)
-            return toReturn + ':' + input.substring(2, 4) + ':00'
-        };
-
-        // creates date object out of formatted time
-        const dataFormatter = d3.timeParse('%H:%M:%S');
-
-        // the actual date is irrelivent, only intiallized because d3 works better with date()
-        // obects, will only display times and the day string
-        const barHours = [{
-                day: 'Mon',
-                open: dataFormatter(convertToValidTimeString(currentlyUsing.mon_start)),
-                close: dataFormatter(convertToValidTimeString(currentlyUsing.mon_end))
-            },
-            {
-                day: 'Tues',
-                open: dataFormatter(convertToValidTimeString(currentlyUsing.tues_start)),
-                close: dataFormatter(convertToValidTimeString(currentlyUsing.tues_end))
-            },
-            {
-                day: 'Wed',
-                open: dataFormatter(convertToValidTimeString(currentlyUsing.wed_start)),
-                close: dataFormatter(convertToValidTimeString(currentlyUsing.wed_end))
-            },
-            {
-                day: 'Thurs',
-                open: dataFormatter(convertToValidTimeString(currentlyUsing.thurs_start)),
-                close: dataFormatter(convertToValidTimeString(currentlyUsing.thurs_end))
-            },
-            {
-                day: 'Fri',
-                open: dataFormatter(convertToValidTimeString(currentlyUsing.fri_start)),
-                close: dataFormatter(convertToValidTimeString(currentlyUsing.fri_end))
-            },
-            {
-                day: 'Sat',
-                open: dataFormatter(convertToValidTimeString(currentlyUsing.sat_start)),
-                close: dataFormatter(convertToValidTimeString(currentlyUsing.sat_end))
-            },
-            {
-                day: 'Sun',
-                open: dataFormatter(convertToValidTimeString(currentlyUsing.sun_start)),
-                close: dataFormatter(convertToValidTimeString(currentlyUsing.sun_end))
-            }
-        ];
-
-        // set up date range axis
-        // delete if still unecessary after next pm
-        let firstDay = d3.timeDay.floor(new Date(barHours[0].open));
-        let lastDay = d3.timeDay.ceil(new Date(barHours[barHours.length - 1].close));
-        let dateRange = [d3.min(barHours, function(d) { return d3.timeDay.floor(new Date(d.open)) }),
-            d3.max(barHours, function(d) { return d3.timeDay.ceil(new Date(d.close)) })
-        ];
-
-        // intital margin and dimension setup
-        const width = 900;
-        const height = 450;
-        const margin = { left: 50, right: 50, bottom: 50, top: 50 };
-
-        // set up d3 time formatting
-        // delete if still unecessary after next pm
-        const dayFormatter = d3.timeFormat("%w");
-        const weekFormatter = d3.timeFormat("%U");
-        const hourFormatter = d3.timeFormat("%X");
-        const yAxisFormatter = d3.timeFormat("%m/%d");
-
-        // begin creating svg
-        const svg = d3.select("#vis-timechart")
-            .append("svg")
-            .attr("width", width + margin.right + margin.left)
-            .attr("height", height + margin.top + margin.bottom)
-            .append("g")
-            .attr('transform', 'translate(' + margin.left + ', ' + margin.top + ')');
-
-        // function that handles creating the graph based on data given
-        const createTimeGraph = (data) => {
-            let xScale = d3.scaleTime()
-                .domain([0, 24])
-                .range([0, width]);
-
-            // delete if no longer using after next pm
-            let yScale = d3.scaleTime()
-                .domain(dateRange)
-                .range([0, height]);
-
-            // use days for y axis rather than dates
-            let yScaleDays = d3.scaleBand()
-                .domain(data.map(function(d) { return d.day }))
-                .range([0, height])
-
-            let fullScale = d3.scaleTime()
-                .domain([d3.timeHour(new Date(2014, 0, 1, 0, 0, 0)),
-                    d3.timeHour(new Date(2014, 0, 2, 0, 0, 0)),
-                ])
-                .range([0, width]);
-
-            // x axis
-            svg.append("g")
-                .attr("transform", "translate(0," + height + ")")
-                .call(d3.axisBottom(xScale)
-                    .scale(fullScale)
-                    .tickFormat(d3.timeFormat("%H:%M")));
-
-            // y axis
-            // svg.append("g")
-            //     .call(d3.axisLeft(yScale)
-            //         .scale(yScale)
-            //         .tickFormat((interval, i) => {
-            //             return i % 2 !== 0 ? " " : yAxisFormatter(interval);
-            //         }));
-
-            // y axis new
-            // uses days instead of dates
-            svg.append("g")
-                .call(d3.axisLeft(yScaleDays))
-
-            // create actual bar graphs
-            svg.append("g")
-                .selectAll("rect")
-                .data(data)
-                .enter()
-                .append("rect")
-                .attr("class", "time-bar")
-                .attr("x", function(d) {
-                    let h = hourFormatter(new Date(d.open)).split(":"), // changes datum from string, to proper Date Object, back to hour string and splits
-                        xh = parseFloat(h[0]) + parseFloat(h[1] / 60); // time (hour and minute) as decimal
-                    return xScale(xh);;
-                })
-                //.attr("y", function (d) { return yScale(d3.timeDay.floor(new Date(d.open))) })
-                .attr("y", function(d) { return yScaleDays(d.day) })
-                .attr("width", function(d) {
-                    let hstart = new Date(d.open),
-                        hstop = new Date(d.close);
-                    return xScale((hstop - hstart) / 3600000); // divide to convert to hours
-                })
-                .attr("height", 30)
-                .attr("rx", 10)
-                .attr("ry", 10)
-        };
-
-        // call function to create the graph and display
-        createTimeGraph(barHours);
     });
 
 })();
