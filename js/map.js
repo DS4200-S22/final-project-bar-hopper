@@ -15,8 +15,8 @@
 
 
     // intital margin and dimension setup
-    const width_time = 900;
-    const height_time = 450;
+    const width_time = 300;
+    const height_time = 300;
     const margin = { left: 50, right: 50, bottom: 50, top: 50 };
 
     // set up d3 time formatting

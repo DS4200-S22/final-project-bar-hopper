@@ -1,7 +1,7 @@
 // set width and height of svg
 (function() {
-    const width = 800
-    const height = 600
+    const width = 300
+    const height = 300
 
     // The svg
     const svg = d3.select("#vis-radar")
@@ -140,7 +140,7 @@
 
 
             let zoom = d3.zoom()
-                .scaleExtent([0.5, 16])
+                .scaleExtent([0.1, 16])
                 .on('zoom', updateChart);
 
             svg.call(zoom);

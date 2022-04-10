@@ -16,7 +16,7 @@ function distance(location1, location2) {
 function bearing(location1, location2) {
     const lat1 = location1.lat * Math.PI / 180; // lat1, lat2, log1, log2 in radians
     const lat2 = location2.lat * Math.PI / 180;
-    const log1 = location1.log * Math.PI / 180; 
+    const log1 = location1.log * Math.PI / 180;
     const log2 = location2.log * Math.PI / 180;
     const y = Math.sin(log2 - log1) * Math.cos(lat2);
     const x = Math.cos(lat1) * Math.sin(lat2) -
@@ -26,9 +26,9 @@ function bearing(location1, location2) {
     return brng;
 }
 
-(function () {
-    const width = 600;
-    const height = 600;
+(function() {
+    const width = 300;
+    const height = 300;
 
     const tagId = "#vis-radial";
     const svg = d3.select(tagId)
@@ -51,7 +51,7 @@ function bearing(location1, location2) {
         // Setting up path
         const path = d3.path();
         const maxDist = d3.max(data, d => {
-            return distance(neuLocation, {lat: d['latitude'], log: d['longitude']})
+            return distance(neuLocation, { lat: d['latitude'], log: d['longitude'] })
         })
         data.forEach(d => {
             path.moveTo(center.x, center.y);

@@ -33,8 +33,17 @@ h3 {
 }
 
 .time-bar {
-	fill: orange;
-	opacity: 80%;
-	stroke: black;
-	stroke-width: 1;
+    fill: orange;
+    opacity: 80%;
+    stroke: black;
+    stroke-width: 1;
+}
+
+.flex-parent {
+    display: flex;
+    justify-content: space-between;
+}
+
+.flex-child {
+    flex: 1;
 }
