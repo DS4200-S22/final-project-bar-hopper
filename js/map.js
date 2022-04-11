@@ -10,7 +10,7 @@
         .attr("width", width_map)
         .attr("height", height_map);
 
-    let g = svg_map.append("g");
+    let g_map = svg_map.append("g");
 
 
     // Radial
@@ -82,6 +82,33 @@
         .attr('transform', 'translate(' + margin.left + ', ' + margin.top + ')');
 
 
+    // Radar
+    const width_radar = 300;
+    const height_radar = 300;
+
+    // Set the initial svg
+    let svg_radar = d3.select("#vis-radar")
+        .append("svg")
+        .attr("width", width_radar)
+        .attr("height", height_radar)
+
+    let g_radar = svg_radar.append("g");
+
+    // Chart settings
+    let presets = {
+        zoom: 20,
+        userSize: 10,
+        rangeSize: 100
+    }
+
+    const user = {
+        // User
+        long: -71.0678,
+        lat: 42.3522,
+        name: "User"
+    }
+
+
     // High level variables to reference in linking visualizations
     // Currently selected bar
     let currentlyUsing;
@@ -89,14 +116,13 @@
     let barHours;
 
 
-    d3.json("https://raw.githubusercontent.com/DS4200-S22/final-project-bar-hopper/main/data/boston.geojson").then(function(data) {
+    d3.json("https://raw.githubusercontent.com/DS4200-S22/final-project-bar-hopper/main/data/boston.geojson").then(function(map_data) {
 
         // Load external data and boot
         d3.csv("https://raw.githubusercontent.com/DS4200-S22/final-project-bar-hopper/main/data/final_merged_data.csv").then(function(merged_data) {
 
             // Set initial bar to the first record
             currentlyUsing = merged_data[0];
-            console.log(currentlyUsing)
 
             // function that handles creating the graph based on data given
             function createTimeGraph() {
@@ -292,14 +318,157 @@
                     .style('fill', 'orange');
             };
 
+            function createRadarGraph() {
+                let albersProjection = d3.geoAlbers()
+                    .scale(190000 * presets.zoom)
+                    .rotate([71.057, 42.313 - user.lat])
+                    .center([user.long + 71.057, 42.313])
+                    .translate([width_radar / 2, height_radar / 2]);
+                // Filter data
+                // data.features = data.features.filter(d => d.properties.name == "France")
+
+                // Draw the map
+                g_radar.selectAll("path")
+                    .data(map_data.features)
+                    .join("path")
+                    .attr("fill", "#b8b8b8")
+                    .attr("d", d3.geoPath()
+                        .projection(albersProjection)
+                    )
+                    .style("stroke", "black")
+                    .style("opacity", .3)
+
+                // Add a tooltip div. Here I define the general feature of the tooltip: stuff that do not depend on the data point.
+                // Its opacity is set to 0: we don't see it by default.
+                const tooltip = d3.select("#vis-radar")
+                    .append("div")
+                    .style("opacity", 0)
+                    .attr("class", "tooltip")
+                    // .style("background-color", "white")
+                    .style("border", "solid")
+                    .style("border-width", "1px")
+                    .style("border-radius", "5px")
+                    .style("padding", "10px")
+
+                // A function that change this tooltip when the user hover a point.
+                // Its opacity is set to 1: we can now see it. Plus it set the text and position of tooltip depending on the datapoint (d)
+                const mouseover = function(event, d) {
+                    // console.log("over")
+
+                    // If the current point is visible, show tooltip
+                    if (d3.select(this).style("opacity") != 0) {
+                        tooltip
+                            .style("opacity", 1)
+                    }
+                }
+
+                let mousemove = function(event, d) {
+                    // console.log("move")
+                    tooltip
+                        .html("This establishment is: " + d.name + "<br> Price: " + d.price + "<br> Rating: " + d.rating + "<br>")
+                        .style("left", event.pageX + "px") // It is important to put the +90: other wise the tooltip is exactly where the point is an it creates a weird effect
+                        .style("top", event.pageY + "px")
+                }
+
+                // A function that change this tooltip when the leaves a point: just need to set opacity to 0 again
+                let mouseleave = function(event, d) {
+                    // console.log("leave")
+                    tooltip
+                        .transition()
+                        .duration(200)
+                        .style("opacity", 0)
+                }
+
+
+                // Add circles:
+                svg_radar
+                    .selectAll("myCircles")
+                    .data(merged_data)
+                    .join("circle")
+                    .attr("id", 'bar')
+                    .attr("class", d => "p" + d.price.length) // price class
+                    .attr("cx", d => albersProjection([d.longitude, d.latitude])[0])
+                    .attr("cy", d => albersProjection([d.longitude, d.latitude])[1])
+                    .attr("r", 6)
+                    .style("fill", "#0000ff")
+                    // .style("fill", "69b3a2")
+                    .style("opacity", 1)
+                    .attr("stroke", "#000000")
+                    .attr("stroke-width", 2)
+                    .attr("fill-opacity", .4)
+                    .on("mouseover", mouseover)
+                    .on("mousemove", mousemove)
+                    .on("mouseleave", mouseleave);
+
+
+                let zoom = d3.zoom()
+                    .scaleExtent([0.1, 16])
+                    .on('zoom', updateChart);
+
+                svg_radar.call(zoom);
+
+
+                // A function that updates the chart when the user zoom and thus new boundaries are available
+                function updateChart(event) {
+
+                    g_radar.selectAll('path')
+                        .attr('transform', event.transform);
+
+                    svg_radar.selectAll("#bar")
+                        .attr('transform', event.transform)
+                        .attr('r', 6 / event.transform.k) // Scale down zoom of circles
+                        .attr('stroke-width', 2 / event.transform.k); // Scale down zoom of circles
+
+                    svg_radar.selectAll('#user')
+                        .attr('transform', event.transform)
+                        .attr('r', presets.userSize / event.transform.k) // Scale down zoom of circles
+                        .attr('stroke-width', 2 / event.transform.k); // Scale down zoom of circles
+
+                    svg_radar.selectAll('#range')
+                        .attr('transform', event.transform)
+                        // .attr('r', presets.rangeSize / event.transform.k) // Scale down zoom of circles
+                        .attr('stroke-width', 2 / event.transform.k); // Scale down zoom of circles
+                }
+
+
+                // add markers
+                svg_radar.append("circle")
+                    .attr("id", "user")
+                    // .attr("cx", albersProjection([user.long, user.lat]))
+                    // .attr("cy", albersProjection([user.long, user.lat]))
+                    .attr("cx", albersProjection([user.long, user.lat])[0])
+                    .attr("cy", albersProjection([user.long, user.lat])[1])
+                    .attr("r", presets.userSize)
+                    .style("fill", "red")
+                    .style("opacity", 1)
+                    .attr("stroke", "#8c0315")
+                    .attr("stroke-width", 2)
+                    .attr("fill-opacity", .4);
+
+
+                // add markers
+                svg_radar.append("circle")
+                    .attr("id", "range")
+                    // .attr("cx", albersProjection([user.long, user.lat]))
+                    // .attr("cy", albersProjection([user.long, user.lat]))
+                    .attr("cx", albersProjection([user.long, user.lat])[0])
+                    .attr("cy", albersProjection([user.long, user.lat])[1])
+                    .attr("r", 100)
+                    .style("fill", "lightgreen")
+                    .style("opacity", 1)
+                    .attr("stroke", "#0b9e35")
+                    .attr("stroke-width", 2)
+                    .attr("fill-opacity", .4);
+            }
+
             // Create graphs on initial load for the default first record
             createTimeGraph();
             createRadialGraph();
-
+            createRadarGraph();
 
             // Map and projection
             const projection = d3.geoMercator()
-                .fitSize([800, 600], data); // Fit data to map size
+                .fitSize([800, 600], map_data); // Fit data to map size
 
             // Filter data
             // data.features = data.features.filter(d => d.properties.name == "France")
@@ -309,8 +478,8 @@
             filter_bars()
 
             // Draw the map
-            g.selectAll("path")
-                .data(data.features)
+            g_map.selectAll("path")
+                .data(map_data.features)
                 .join("path")
                 .attr("fill", "#b8b8b8")
                 .attr("d", d3.geoPath()
@@ -408,7 +577,7 @@
             // A function that updates the chart when the user zoom and thus new boundaries are available
             function updateMapZoom(event) {
 
-                g.selectAll('path')
+                g_map.selectAll('path')
                     .attr('transform', event.transform);
 
                 svg_map.selectAll("circle")
