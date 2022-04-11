@@ -35,23 +35,23 @@
         const lat1 = location1.lat * Math.PI / 180; // lat1, lat2 in radians
         const lat2 = location2.lat * Math.PI / 180;
         const latDiff = (location2.lat - location1.lat) * Math.PI / 180;
-        const logDiff = (location2.log - location1.log) * Math.PI / 180;
+        const longDiff = (location2.long - location1.long) * Math.PI / 180;
 
         const a = Math.sin(latDiff / 2) * Math.sin(latDiff / 2) +
             Math.cos(lat1) * Math.cos(lat2) *
-            Math.sin(logDiff / 2) * Math.sin(logDiff / 2);
+            Math.sin(longDiff / 2) * Math.sin(longDiff / 2);
         const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
         return R * c;
     }
 
     function bearing(location1, location2) {
-        const lat1 = location1.lat * Math.PI / 180; // lat1, lat2, log1, log2 in radians
+        const lat1 = location1.lat * Math.PI / 180; // lat1, lat2, long1, long2 in radians
         const lat2 = location2.lat * Math.PI / 180;
-        const log1 = location1.log * Math.PI / 180;
-        const log2 = location2.log * Math.PI / 180;
-        const y = Math.sin(log2 - log1) * Math.cos(lat2);
+        const long1 = location1.long * Math.PI / 180;
+        const long2 = location2.long * Math.PI / 180;
+        const y = Math.sin(long2 - long1) * Math.cos(lat2);
         const x = Math.cos(lat1) * Math.sin(lat2) -
-            Math.sin(lat1) * Math.cos(lat2) * Math.cos(log2 - log1);
+            Math.sin(lat1) * Math.cos(lat2) * Math.cos(long2 - long1);
         const θ = Math.atan2(y, x);
         const brng = (θ * 180 / Math.PI + 360) % 360; // in degrees
         return brng;
@@ -87,7 +87,8 @@
     const height_radar = 300;
 
     // Set the initial svg
-    let svg_radar = d3.select("#vis-radar")
+    const tagId_radar = "#vis-radar"
+    let svg_radar = d3.select(tagId_radar)
         .append("svg")
         .attr("width", width_radar)
         .attr("height", height_radar)
@@ -101,12 +102,12 @@
         rangeSize: 100
     }
 
-    const user = {
-        // User
-        long: -71.0678,
-        lat: 42.3522,
-        name: "User"
-    }
+    // const user = {
+    //     // User
+    //     long: -71.0678,
+    //     lat: 42.3522,
+    //     name: "User"
+    // }
 
 
     // High level variables to reference in linking visualizations
@@ -278,18 +279,18 @@
                 // Parse the current selected bar's location data
                 let currentlyUsingLocation = {
                     lat: currentlyUsing.latitude,
-                    log: currentlyUsing.longitude
+                    long: currentlyUsing.longitude
                 }
 
                 const path = d3.path();
                 const maxDist = d3.max(merged_data, d => {
-                    return distance(currentlyUsingLocation, { lat: d['latitude'], log: d['longitude'] })
+                    return distance(currentlyUsingLocation, { lat: d['latitude'], long: d['longitude'] })
                 })
                 merged_data.forEach(d => {
                     path.moveTo(center.x, center.y);
                     const barLocation = {
                         lat: d['latitude'],
-                        log: d['longitude'],
+                        long: d['longitude'],
                     };
                     const dist = distance(currentlyUsingLocation, barLocation) / maxDist;
                     const bear = bearing(currentlyUsingLocation, barLocation);
@@ -319,13 +320,41 @@
             };
 
             function createRadarGraph() {
+                // Delete old radar graph and replace with new
+                d3.select(tagId_radar).selectAll("svg").remove()
+
+                svg_radar = d3.select(tagId_radar)
+                    .append("svg")
+                    .attr("width", width_radar)
+                    .attr("height", height_radar)
+
+                g_radar = svg_radar.append("g");
+
+
+                // // Parse the current selected bar's location data
+                let user = {
+                    lat: currentlyUsing.latitude,
+                    long: currentlyUsing.longitude
+                }
+
+                // const user = {
+                //     // User
+                //     long: -71.0678,
+                //     lat: 42.3522,
+                //     name: "User"
+                // }
+
                 let albersProjection = d3.geoAlbers()
                     .scale(190000 * presets.zoom)
-                    .rotate([71.057, 42.313 - user.lat])
-                    .center([user.long + 71.057, 42.313])
+                    .rotate([71.057, 42.313 - 42.3522])
+                    .center([-71.0678 + 71.057, 42.313])
                     .translate([width_radar / 2, height_radar / 2]);
-                // Filter data
-                // data.features = data.features.filter(d => d.properties.name == "France")
+
+                // let albersProjection = d3.geoAlbers()
+                //     .scale(190000 * presets.zoom)
+                //     .rotate([71.057, 42.313 - user.lat])
+                //     .center([user.long + 71.057, 42.313])
+                //     .translate([width_radar / 2, height_radar / 2]);
 
                 // Draw the map
                 g_radar.selectAll("path")
@@ -468,7 +497,7 @@
 
             // Map and projection
             const projection = d3.geoMercator()
-                .fitSize([800, 600], map_data); // Fit data to map size
+                .fitSize([450, 450], map_data); // Fit data to map size
 
             // Filter data
             // data.features = data.features.filter(d => d.properties.name == "France")
@@ -564,6 +593,7 @@
                     console.log(currentlyUsing);
                     createTimeGraph();
                     createRadialGraph();
+                    createRadarGraph();
                 });
 
             // Zoom functionality for map
