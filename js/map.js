@@ -227,14 +227,16 @@
                 d3.select("#bar-name").select("h1").remove();
                 d3.select("#bar-name")
                     .append("h1")
-                    .text(currentlyUsing.name);
-
-                // Delete previous data and add Yelp link
-                d3.select("#yelp-link").select("a").remove();
-                d3.select("#yelp-link")
                     .append("a")
                     .attr("href", currentlyUsing.url)
-                    .html("Yelp Page");
+                    .text(currentlyUsing.name);
+
+                //     // Delete previous data and add Yelp link
+                //     d3.select("#yelp-link").select("a").remove();
+                //     d3.select("#yelp-link")
+                //         .append("a")
+                //         .attr("href", currentlyUsing.url)
+                //         .html("Yelp Page");
             };
 
             function createRadialGraph() {

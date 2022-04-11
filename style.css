@@ -47,3 +47,7 @@ h3 {
 .flex-child {
     flex: 1;
 }
+
+#bar-name {
+    text-align: center;
+}
