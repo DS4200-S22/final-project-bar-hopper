@@ -1,19 +1,35 @@
-// Map
-// set width and height of svg
 (function() {
-    const width = 450
-    const height = 450
+    // Map
+    const width_map = 450;
+    const height_map = 450;
 
-    // The svg
-    const svg = d3.select("#vis_map")
+    // Set the initial svg
+    const tagId_map = "#vis-map";
+    let svg_map = d3.select(tagId_map)
         .append("svg")
-        .attr("width", width)
-        .attr("height", height)
+        .attr("width", width_map)
+        .attr("height", height_map);
 
-    let g = svg.append("g");
+    let g = svg_map.append("g");
 
 
     // Radial
+    const width_radial = 300;
+    const height_radial = 300;
+
+    // Set the initial svg
+    const tagId_radial = "#vis-radial";
+    let svg_radial = d3.select(tagId_radial)
+        .append("svg")
+        .attr("width", width_radial) // Sets the width of the svg
+        .attr("height", height_radial) // Sets the height of the svg
+        .attr("viewBox", [0, 0, width_radial, height_radial]); // Sets the viewbox of the svg
+
+    const center = {
+        x: width_radial / 2,
+        y: height_radial / 2,
+    };
+
     function distance(location1, location2) {
         const R = 6371e3;
         const lat1 = location1.lat * Math.PI / 180; // lat1, lat2 in radians
@@ -41,25 +57,10 @@
         return brng;
     }
 
-    const width_radial = 300;
-    const height_radial = 300;
-
-    const tagId_radial = "#vis-radial";
-    let svg_radial = d3.select(tagId_radial)
-        .append("svg")
-        .attr("width", width_radial) // Sets the width of the svg
-        .attr("height", height_radial) // Sets the height of the svg
-        .attr("viewBox", [0, 0, width_radial, height_radial]); // Sets the viewbox of the svg
-
-    const center = {
-        x: width_radial / 2,
-        y: height_radial / 2,
-    };
-
-
 
     // Time
-    // intital margin and dimension setup
+
+    // Intital margin and dimension setup
     const width_time = 300;
     const height_time = 300;
     const margin = { left: 50, right: 50, bottom: 50, top: 50 };
@@ -71,8 +72,9 @@
     const hourFormatter = d3.timeFormat("%X");
     const yAxisFormatter = d3.timeFormat("%m/%d");
 
-    // begin creating time svg
-    let svg_time = d3.select("#vis-timechart")
+    // Set the initial svg
+    const tagId_time = "#vis-timechart";
+    let svg_time = d3.select(tagId_time)
         .append("svg")
         .attr("width", width_time + margin.right + margin.left)
         .attr("height", height_time + margin.top + margin.bottom)
@@ -80,26 +82,11 @@
         .attr('transform', 'translate(' + margin.left + ', ' + margin.top + ')');
 
 
-
-
-    // Data for time chart
+    // High level variables to reference in linking visualizations
+    // Currently selected bar
     let currentlyUsing;
+    // Bar hours of operation data
     let barHours;
-
-    // // Create data for circles:
-    // const markers = [{
-    //         // Northeastern
-    //         long: -71.0892,
-    //         lat: 42.3398,
-    //         name: "Northeastern University"
-    //     },
-    //     {
-    //         // Boston Common
-    //         long: -71.0668,
-    //         lat: 42.3552,
-    //         name: "Boston Common"
-    //     }
-    // ];
 
 
     d3.json("https://raw.githubusercontent.com/DS4200-S22/final-project-bar-hopper/main/data/boston.geojson").then(function(data) {
@@ -107,14 +94,14 @@
         // Load external data and boot
         d3.csv("https://raw.githubusercontent.com/DS4200-S22/final-project-bar-hopper/main/data/final_merged_data.csv").then(function(merged_data) {
 
-            currentlyUsing = merged_data[0]
-
-
+            // Set initial bar to the first record
+            currentlyUsing = merged_data[0];
+            console.log(currentlyUsing)
 
             // function that handles creating the graph based on data given
             function createTimeGraph() {
                 // Delete old time chart and replace with new
-                d3.select("#vis-timechart").selectAll("svg").remove()
+                d3.select("#vis-timechart").selectAll("svg").remove();
 
                 svg_time = d3.select("#vis-timechart")
                     .append("svg")
@@ -123,12 +110,10 @@
                     .append("g")
                     .attr('transform', 'translate(' + margin.left + ', ' + margin.top + ')');
 
-
-
                 const convertToValidTimeString = (input) => {
-                    let toReturn
-                    toReturn = input.substring(0, 2)
-                    return toReturn + ':' + input.substring(2, 4) + ':00'
+                    let toReturn;
+                    toReturn = input.substring(0, 2);
+                    return toReturn + ':' + input.substring(2, 4) + ':00';
                 };
 
                 // creates date object out of formatted time
@@ -183,26 +168,6 @@
                     d3.max(barHours, function(d) { return d3.timeDay.ceil(new Date(d.close)) })
                 ];
 
-                // // intital margin and dimension setup
-                // const width_time = 900;
-                // const height_time = 450;
-                // const margin = { left: 50, right: 50, bottom: 50, top: 50 };
-
-                // // set up d3 time formatting
-                // // delete if still unecessary after next pm
-                // const dayFormatter = d3.timeFormat("%w");
-                // const weekFormatter = d3.timeFormat("%U");
-                // const hourFormatter = d3.timeFormat("%X");
-                // const yAxisFormatter = d3.timeFormat("%m/%d");
-
-                // // begin creating svg
-                // const svg_time = d3.select("#vis-timechart")
-                //     .append("svg")
-                //     .attr("width", width_time + margin.right + margin.left)
-                //     .attr("height", height_time + margin.top + margin.bottom)
-                //     .append("g")
-                //     .attr('transform', 'translate(' + margin.left + ', ' + margin.top + ')');
-
                 let xScale = d3.scaleTime()
                     .domain([0, 24])
                     .range([0, width_time]);
@@ -256,15 +221,24 @@
                     })
                     .attr("height", 30)
                     .attr("rx", 10)
-                    .attr("ry", 10)
+                    .attr("ry", 10);
+
+                // Delete previous data and add bar name
+                d3.select("#bar-name").select("h1").remove();
+                d3.select("#bar-name")
+                    .append("h1")
+                    .text(currentlyUsing.name);
+
+                // Delete previous data and add Yelp link
+                d3.select("#yelp-link").select("a").remove();
+                d3.select("#yelp-link")
+                    .append("a")
+                    .attr("href", currentlyUsing.url)
+                    .html("Yelp Page");
             };
 
             function createRadialGraph() {
-                // Radial Chart
-                // Setting up path
-
-
-                // Delete old time chart and replace with new
+                // Delete old radial graph and replace with new
                 d3.select(tagId_radial).selectAll("svg").remove()
 
                 svg_radial = d3.select(tagId_radial)
@@ -273,6 +247,7 @@
                     .attr("height", height_radial) // Sets the height of the svg
                     .attr("viewBox", [0, 0, width_radial, height_radial]); // Sets the viewbox of the svg
 
+                // Parse the current selected bar's location data
                 let currentlyUsingLocation = {
                     lat: currentlyUsing.latitude,
                     log: currentlyUsing.longitude
@@ -315,8 +290,9 @@
                     .style('fill', 'orange');
             };
 
-
-
+            // Create graphs on initial load for the default first record
+            createTimeGraph();
+            createRadialGraph();
 
 
             // Map and projection
@@ -326,9 +302,9 @@
             // Filter data
             // data.features = data.features.filter(d => d.properties.name == "France")
 
-            d3.selectAll(".price").on("change", update);
-            d3.selectAll(".rating").on("change", update);
-            update()
+            d3.selectAll(".price").on("change", filter_bars);
+            d3.selectAll(".rating").on("change", filter_bars);
+            filter_bars()
 
             // Draw the map
             g.selectAll("path")
@@ -391,7 +367,7 @@
             }
 
             // Add circles:
-            myCircles = svg
+            myCircles = svg_map
                 .selectAll("myCircles")
                 .data(merged_data)
                 .join("circle")
@@ -412,44 +388,45 @@
                 .on("click", function(event, d) {
                     // Redirect to bar's yelp page
                     // window.location = d.url;
-                    // Pass data to time chart
+                    // Pass data to other charts
                     currentlyUsing = d;
                     console.log(currentlyUsing);
                     createTimeGraph();
                     createRadialGraph();
                 });
 
+            // Zoom functionality for map
             let zoom = d3.zoom()
                 .scaleExtent([0.5, 16])
-                .on('zoom', updateChart);
+                .on('zoom', updateMapZoom);
 
-            svg.call(zoom);
+            svg_map.call(zoom);
 
 
             // A function that updates the chart when the user zoom and thus new boundaries are available
-            function updateChart(event) {
+            function updateMapZoom(event) {
 
                 g.selectAll('path')
                     .attr('transform', event.transform);
 
-                svg.selectAll("circle")
+                svg_map.selectAll("circle")
                     .attr('transform', event.transform)
                     .attr('r', 6 / event.transform.k) // Scale down zoom of circles
                     .attr('stroke-width', 2 / event.transform.k); // Scale down zoom of circles
             }
 
-            function update() {
+            function filter_bars() {
                 // Get checkbox data
                 d3.selectAll(".price").each(function(d) {
                     cb = d3.select(this);
                     price_level = "p" + cb.property("value")
                         // If the box is checked, I show the group
                     if (cb.property("checked")) {
-                        svg.selectAll("." + price_level).style("opacity", 1)
+                        svg_map.selectAll("." + price_level).style("opacity", 1)
 
                         // Otherwise I hide it
                     } else {
-                        svg.selectAll("." + price_level).style("opacity", 0)
+                        svg_map.selectAll("." + price_level).style("opacity", 0)
                     }
                 });
 
@@ -459,7 +436,7 @@
                     rating = "r" + cb.property("value") * 10
                         //         // If the box is checked, I show the group
                     if (cb.property("checked")) {
-                        svg.selectAll("." + rating).style("opacity", 1)
+                        svg_map.selectAll("." + rating).style("opacity", 1)
                     }
                 });
             }
