@@ -72,32 +72,35 @@
         <input type="checkbox" class="rating" value="5"> 5
     </div>
 
-    <div id="vis_map"></div>
-    <!-- Scatter -->
-    <div class='vis-holder' id="vis-scatter-container">
-        <div id="vis-scatter"></div>
-        <div id='legend'>
-            <div>
-                <div class="circle" style='background: black;'></div>
-                <div class='label'>unknown</div>
+
+    <div class="parent flex-parent">
+        <div class="child flex-child" id="vis_map"></div>
+        <!-- Scatter -->
+        <div class='vis-holder child flex-child' id="vis-scatter-container">
+            <div id="vis-scatter"></div>
+            <div id='legend'>
+                <div>
+                    <div class="circle" style='background: black;'></div>
+                    <div class='label'>unknown</div>
+                </div>
+                <div>
+                    <div class="circle" style='background: #eb4034;'></div>
+                    <div class='label'>$</div>
+                </div>
+                <div>
+                    <div class="circle" style='background: #1c03fc;'></div>
+                    <div class='label'>$$</div>
+                </div>
+                <div>
+                    <div class="circle" style='background: #6eeb34;'></div>
+                    <div class='label'>$$$</div>
+                </div>
+                <div>
+                    <div class="circle" style='background: #34ebdc;'></div>
+                    <div class='label'>$$$$</div>
+                </div>
+                <button id="vis-scatter-zoom-reset">Reset</button>
             </div>
-            <div>
-                <div class="circle" style='background: #eb4034;'></div>
-                <div class='label'>$</div>
-            </div>
-            <div>
-                <div class="circle" style='background: #1c03fc;'></div>
-                <div class='label'>$$</div>
-            </div>
-            <div>
-                <div class="circle" style='background: #6eeb34;'></div>
-                <div class='label'>$$$</div>
-            </div>
-            <div>
-                <div class="circle" style='background: #34ebdc;'></div>
-                <div class='label'>$$$$</div>
-            </div>
-            <button id="vis-scatter-zoom-reset">Reset</button>
         </div>
     </div>
     <div class="parent flex-parent">
@@ -159,7 +162,7 @@
     <script src='js/map.js'></script>
     <script src='js/scatter.js'></script>
     <script src='js/radar.js'></script>
-    <script src='js/radial.js'></script>
+    <!-- <script src='js/radial.js'></script> -->
 </body>
 
 </html>

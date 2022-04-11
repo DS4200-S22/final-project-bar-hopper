@@ -1,7 +1,8 @@
+// Map
 // set width and height of svg
 (function() {
-    const width = 800
-    const height = 600
+    const width = 450
+    const height = 450
 
     // The svg
     const svg = d3.select("#vis_map")
@@ -12,8 +13,52 @@
     let g = svg.append("g");
 
 
+    // Radial
+    function distance(location1, location2) {
+        const R = 6371e3;
+        const lat1 = location1.lat * Math.PI / 180; // lat1, lat2 in radians
+        const lat2 = location2.lat * Math.PI / 180;
+        const latDiff = (location2.lat - location1.lat) * Math.PI / 180;
+        const logDiff = (location2.log - location1.log) * Math.PI / 180;
+
+        const a = Math.sin(latDiff / 2) * Math.sin(latDiff / 2) +
+            Math.cos(lat1) * Math.cos(lat2) *
+            Math.sin(logDiff / 2) * Math.sin(logDiff / 2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return R * c;
+    }
+
+    function bearing(location1, location2) {
+        const lat1 = location1.lat * Math.PI / 180; // lat1, lat2, log1, log2 in radians
+        const lat2 = location2.lat * Math.PI / 180;
+        const log1 = location1.log * Math.PI / 180;
+        const log2 = location2.log * Math.PI / 180;
+        const y = Math.sin(log2 - log1) * Math.cos(lat2);
+        const x = Math.cos(lat1) * Math.sin(lat2) -
+            Math.sin(lat1) * Math.cos(lat2) * Math.cos(log2 - log1);
+        const θ = Math.atan2(y, x);
+        const brng = (θ * 180 / Math.PI + 360) % 360; // in degrees
+        return brng;
+    }
+
+    const width_radial = 300;
+    const height_radial = 300;
+
+    const tagId_radial = "#vis-radial";
+    let svg_radial = d3.select(tagId_radial)
+        .append("svg")
+        .attr("width", width_radial) // Sets the width of the svg
+        .attr("height", height_radial) // Sets the height of the svg
+        .attr("viewBox", [0, 0, width_radial, height_radial]); // Sets the viewbox of the svg
+
+    const center = {
+        x: width_radial / 2,
+        y: height_radial / 2,
+    };
 
 
+
+    // Time
     // intital margin and dimension setup
     const width_time = 300;
     const height_time = 300;
@@ -65,83 +110,6 @@
             currentlyUsing = merged_data[0]
 
 
-            // Time chart
-
-            // const convertToValidTimeString = (input) => {
-            //     let toReturn
-            //     toReturn = input.substring(0, 2)
-            //     return toReturn + ':' + input.substring(2, 4) + ':00'
-            // };
-
-            // // creates date object out of formatted time
-            // const dataFormatter = d3.timeParse('%H:%M:%S');
-
-            // // the actual date is irrelivent, only intiallized because d3 works better with date()
-            // // obects, will only display times and the day string
-            // const barHours = [{
-            //         day: 'Mon',
-            //         open: dataFormatter(convertToValidTimeString(currentlyUsing.mon_start)),
-            //         close: dataFormatter(convertToValidTimeString(currentlyUsing.mon_end))
-            //     },
-            //     {
-            //         day: 'Tues',
-            //         open: dataFormatter(convertToValidTimeString(currentlyUsing.tues_start)),
-            //         close: dataFormatter(convertToValidTimeString(currentlyUsing.tues_end))
-            //     },
-            //     {
-            //         day: 'Wed',
-            //         open: dataFormatter(convertToValidTimeString(currentlyUsing.wed_start)),
-            //         close: dataFormatter(convertToValidTimeString(currentlyUsing.wed_end))
-            //     },
-            //     {
-            //         day: 'Thurs',
-            //         open: dataFormatter(convertToValidTimeString(currentlyUsing.thurs_start)),
-            //         close: dataFormatter(convertToValidTimeString(currentlyUsing.thurs_end))
-            //     },
-            //     {
-            //         day: 'Fri',
-            //         open: dataFormatter(convertToValidTimeString(currentlyUsing.fri_start)),
-            //         close: dataFormatter(convertToValidTimeString(currentlyUsing.fri_end))
-            //     },
-            //     {
-            //         day: 'Sat',
-            //         open: dataFormatter(convertToValidTimeString(currentlyUsing.sat_start)),
-            //         close: dataFormatter(convertToValidTimeString(currentlyUsing.sat_end))
-            //     },
-            //     {
-            //         day: 'Sun',
-            //         open: dataFormatter(convertToValidTimeString(currentlyUsing.sun_start)),
-            //         close: dataFormatter(convertToValidTimeString(currentlyUsing.sun_end))
-            //     }
-            // ];
-
-            // // set up date range axis
-            // // delete if still unecessary after next pm
-            // let firstDay = d3.timeDay.floor(new Date(barHours[0].open));
-            // let lastDay = d3.timeDay.ceil(new Date(barHours[barHours.length - 1].close));
-            // let dateRange = [d3.min(barHours, function(d) { return d3.timeDay.floor(new Date(d.open)) }),
-            //     d3.max(barHours, function(d) { return d3.timeDay.ceil(new Date(d.close)) })
-            // ];
-
-            // // intital margin and dimension setup
-            // const width_time = 900;
-            // const height_time = 450;
-            // const margin = { left: 50, right: 50, bottom: 50, top: 50 };
-
-            // // set up d3 time formatting
-            // // delete if still unecessary after next pm
-            // const dayFormatter = d3.timeFormat("%w");
-            // const weekFormatter = d3.timeFormat("%U");
-            // const hourFormatter = d3.timeFormat("%X");
-            // const yAxisFormatter = d3.timeFormat("%m/%d");
-
-            // // begin creating svg
-            // const svg_time = d3.select("#vis-timechart")
-            //     .append("svg")
-            //     .attr("width", width_time + margin.right + margin.left)
-            //     .attr("height", height_time + margin.top + margin.bottom)
-            //     .append("g")
-            //     .attr('transform', 'translate(' + margin.left + ', ' + margin.top + ')');
 
             // function that handles creating the graph based on data given
             function createTimeGraph() {
@@ -291,7 +259,61 @@
                     .attr("ry", 10)
             };
 
+            function createRadialGraph() {
+                // Radial Chart
+                // Setting up path
 
+
+                // Delete old time chart and replace with new
+                d3.select(tagId_radial).selectAll("svg").remove()
+
+                svg_radial = d3.select(tagId_radial)
+                    .append("svg")
+                    .attr("width", width_radial) // Sets the width of the svg
+                    .attr("height", height_radial) // Sets the height of the svg
+                    .attr("viewBox", [0, 0, width_radial, height_radial]); // Sets the viewbox of the svg
+
+                let currentlyUsingLocation = {
+                    lat: currentlyUsing.latitude,
+                    log: currentlyUsing.longitude
+                }
+
+                const path = d3.path();
+                const maxDist = d3.max(merged_data, d => {
+                    return distance(currentlyUsingLocation, { lat: d['latitude'], log: d['longitude'] })
+                })
+                merged_data.forEach(d => {
+                    path.moveTo(center.x, center.y);
+                    const barLocation = {
+                        lat: d['latitude'],
+                        log: d['longitude'],
+                    };
+                    const dist = distance(currentlyUsingLocation, barLocation) / maxDist;
+                    const bear = bearing(currentlyUsingLocation, barLocation);
+                    const x = dist * center.x * Math.cos(bear) + center.x;
+                    const y = dist * center.y * Math.sin(bear) + center.y;
+                    path.lineTo(x, y);
+                    svg_radial
+                        .append('circle')
+                        .attr('cx', x)
+                        .attr('cy', y)
+                        .attr('r', 2)
+                        .style('fill', 'blue')
+                });
+
+                svg_radial
+                    .append('path')
+                    .attr('stroke', 'black')
+                    .attr('opacity', 0.3)
+                    .attr('d', path);
+
+                svg_radial
+                    .append('circle')
+                    .attr('cx', center.x)
+                    .attr('cy', center.y)
+                    .attr('r', 5)
+                    .style('fill', 'orange');
+            };
 
 
 
@@ -394,6 +416,7 @@
                     currentlyUsing = d;
                     console.log(currentlyUsing);
                     createTimeGraph();
+                    createRadialGraph();
                 });
 
             let zoom = d3.zoom()
