@@ -125,7 +125,7 @@
             // Set initial bar to the first record
             currentlyUsing = merged_data[0];
 
-            // function that handles creating the graph based on data given
+            // Function that creates the time graph for the selected bar
             function createTimeGraph() {
                 // Delete old time chart and replace with new
                 d3.select("#vis-timechart").selectAll("svg").remove();
@@ -266,6 +266,7 @@
                 //         .html("Yelp Page");
             };
 
+            // Function that creates the radial graph for the selected bar
             function createRadialGraph() {
                 // Delete old radial graph and replace with new
                 d3.select(tagId_radial).selectAll("svg").remove()
@@ -319,6 +320,7 @@
                     .style('fill', 'orange');
             };
 
+            // Function that creates the radar graph for the selected bar
             function createRadarGraph() {
                 // Delete old radar graph and replace with new
                 d3.select(tagId_radar).selectAll("svg").remove()
@@ -408,7 +410,6 @@
                         .style("opacity", 0)
                 }
 
-
                 // Add circles:
                 svg_radar
                     .selectAll("myCircles")
@@ -459,7 +460,6 @@
                         .attr('stroke-width', 2 / event.transform.k); // Scale down zoom of circles
                 }
 
-
                 // add markers
                 svg_radar.append("circle")
                     .attr("id", "user")
@@ -473,7 +473,6 @@
                     .attr("stroke", "#8c0315")
                     .attr("stroke-width", 2)
                     .attr("fill-opacity", .4);
-
 
                 // add markers
                 svg_radar.append("circle")
