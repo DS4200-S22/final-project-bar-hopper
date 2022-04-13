@@ -432,7 +432,7 @@
 
 
                 let zoom = d3.zoom()
-                    .scaleExtent([0.1, 16])
+                    .scaleExtent([0.05, 16])
                     .on('zoom', updateChart);
 
                 svg_radar.call(zoom);
@@ -481,7 +481,7 @@
                     // .attr("cy", albersProjection([user.long, user.lat]))
                     .attr("cx", albersProjection([user.long, user.lat])[0])
                     .attr("cy", albersProjection([user.long, user.lat])[1])
-                    .attr("r", 100)
+                    .attr("r", 4)
                     .style("fill", "lightgreen")
                     .style("opacity", 1)
                     .attr("stroke", "#0b9e35")
