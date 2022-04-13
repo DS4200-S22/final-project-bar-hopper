@@ -329,8 +329,8 @@ function isBrushed(x0, x1, y0, y1, cx, cy) {
                     .attr("r", 6)
                     .style('fill', d => color[d["price"]] || "black")
                     .attr("stroke", "#000000")
-                    .attr("stroke-width", 2)
-                    .attr("fill-opacity", .4)
+                    // .attr("stroke-width", 2)
+                    // .attr("fill-opacity", .4)
                     .on("mouseover", mouseover)
                     .on("mousemove", mousemove)
                     .on("mouseleave", mouseleave);
@@ -348,6 +348,7 @@ function isBrushed(x0, x1, y0, y1, cx, cy) {
                     .append("path")
                     .attr("d", d => `M${xScaleScatter(d['rating'] || 0)},${yScaleScatter(d['review_count'] || 0)}h0`)
                     .attr("stroke", d => color[d['price']] || 'black')
+                    // .attr("opacity", .4)
                     .attr('r', 8)
                     .on("mouseover", mouseover)
                     .on("mousemove", mousemove)
