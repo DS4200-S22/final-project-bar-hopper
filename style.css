@@ -51,3 +51,9 @@ h3 {
 #bar-name {
     text-align: center;
 }
+
+.selected {
+    stroke: black;
+    opacity: 1 !important;
+    stroke-width: 5px;
+}
