@@ -1,7 +1,7 @@
 (function() {
     // Map
-    const width_map = 450;
-    const height_map = 450;
+    const width_map = 650;
+    const height_map = 650;
 
     // Set the initial svg
     const tagId_map = "#vis-map";
@@ -496,7 +496,7 @@
 
             // Map and projection
             const projection = d3.geoMercator()
-                .fitSize([450, 450], map_data); // Fit data to map size
+                .fitSize([width_map, height_map], map_data); // Fit data to map size
 
             // Filter data
             // data.features = data.features.filter(d => d.properties.name == "France")
@@ -515,47 +515,6 @@
                 )
                 .style("stroke", "black")
                 .style("opacity", .3)
-
-            // Add a tooltip div. Here I define the general feature of the tooltip: stuff that do not depend on the data point.
-            // Its opacity is set to 0: we don't see it by default.
-            const tooltip = d3.select("#vis_map")
-                .append("div")
-                .style("opacity", 0)
-                .attr("class", "tooltip")
-                // .style("background-color", "white")
-                .style("border", "solid")
-                .style("border-width", "1px")
-                .style("border-radius", "5px")
-                .style("padding", "10px")
-
-            // A function that change this tooltip when the user hover a point.
-            // Its opacity is set to 1: we can now see it. Plus it set the text and position of tooltip depending on the datapoint (d)
-            const mouseover = function(event, d) {
-                // console.log("over", event.target, this)
-
-                // If the current point is visible, show tooltip
-                if (d3.select(this).style("opacity") != 0) {
-                    tooltip
-                        .style("opacity", 1)
-                }
-            }
-
-            let mousemove = function(event, d) {
-                // console.log("move")
-                tooltip
-                    .html("This establishment is: " + d.name + "<br> Price: " + d.price + "<br> Rating: " + d.rating + "<br>")
-                    .style("left", (event.pageX + 10) + "px")
-                    .style("top", (event.pageY - 45) + "px")
-            }
-
-            // A function that change this tooltip when the leaves a point: just need to set opacity to 0 again
-            let mouseleave = function(event, d) {
-                // console.log("leave")
-                tooltip
-                    .transition()
-                    .duration(200)
-                    .style("opacity", 0)
-            }
 
             // Setting up channels
             const color = {
@@ -581,9 +540,6 @@
                 .attr("stroke", "#000000")
                 .attr("stroke-width", 2)
                 .attr("fill-opacity", .4)
-                .on("mouseover", mouseover)
-                .on("mousemove", mousemove)
-                .on("mouseleave", mouseleave)
                 .on("click", function(event, d) {
                     // Redirect to bar's yelp page
                     // window.location = d.url;

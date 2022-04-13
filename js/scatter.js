@@ -1,8 +1,8 @@
 (function() {
     // Reference: https://observablehq.com/@d3/zoomable-scatterplot
     const margin = { top: 25, right: 25, bottom: 15, left: 15 };
-    const width = 450;
-    const height = 450;
+    const width = 250;
+    const height = 350;
     const innerWidth = width - margin.left - margin.right;
     const innerHeight = height - margin.top - margin.bottom;
     const k = height / width;
