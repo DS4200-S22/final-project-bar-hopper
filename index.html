@@ -10,6 +10,7 @@
     <title>DS4200 S22 Final Project</title>
 
     <!-- CSS Styling -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
     <link rel='stylesheet' href='style.css'>
     <link rel='stylesheet' href='./styles/scatter.css'>
 </head>
@@ -49,15 +50,34 @@
 
 
     <!-- Visualization -->
-    <h1>Visualization</h1>
-
     <div id="tooltip"></div>
-    <div>
-        <p>Price</p>
-        <input type="checkbox" class="price" value="$"> $
-        <input type="checkbox" class="price" value="$$"> $$
-        <input type="checkbox" class="price" value="$$$"> $$$
-        <input type="checkbox" class="price" value="$$$$"> $$$$
+    <div class="content-column container">
+        <h1>Visualization</h1>
+        <div class="row justify-content-evenly">
+            <div class="col-4">
+                <div id="vis-map"></div>
+            </div>
+            <div class="col-4">
+                <div class="container">
+                    <div style="display:flex; flex-direction: row;">
+                        <p style="display: inline;">Price: </p>
+                        <div>
+                            <input style="display: inline;" type="checkbox" class="price" value="$"> $
+                        </div>
+                        <div>
+                            <input style="display: inline;" type="checkbox" class="price" value="$$"> $$
+                        </div>
+                        <div>
+                            <input style="display: inline;" type="checkbox" class="price" value="$$$"> $$$
+                        </div>
+                        <div>
+                            <input style="display: inline;" type="checkbox" class="price" value="$$$$">$$$$
+                        </div>
+                    </div>
+                    <div id="vis-scatter"></div>
+                </div>
+            </div>
+          </div>
     </div>
 
     <div>
@@ -75,10 +95,10 @@
 
 
     <div class="parent flex-parent">
-        <div class="child flex-child" id="vis-map"></div>
+        <!-- <div class="child flex-child" id="vis-map"></div> -->
         <!-- Scatter -->
         <div class='vis-holder child flex-child' id="vis-scatter-container">
-            <div id="vis-scatter"></div>
+            <!-- <div id="vis-scatter"></div> -->
             <div id='legend'>
                 <div>
                     <div class="circle" style='background: black;'></div>

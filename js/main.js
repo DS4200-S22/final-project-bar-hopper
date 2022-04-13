@@ -35,14 +35,14 @@ function isBrushed(x0, x1, y0, y1, cx, cy) {
         d3.csv("https://raw.githubusercontent.com/DS4200-S22/final-project-bar-hopper/main/data/final_merged_data.csv").then(function (mergedData) {
 
             // Map Dimension and Projection
-            const widthMap = 450;
-            const heightMap = 450;
+            const widthMap = 500;
+            const heightMap = 500;
             const projection_map = d3.geoMercator()
                 .fitSize([widthMap, heightMap], mapData)
 
             // Scatter Dimension and Margin
-            const widthScatter = 500;
-            const heightScatter = 500;
+            const widthScatter = 400;
+            const heightScatter = 350;
             const margin_scatter = { top: 25, right: 25, bottom: 15, left: 15 };
             const innerWidthScatter = widthScatter - margin_scatter.left - margin_scatter.right;
             const innerHeightScatter = heightScatter - margin_scatter.top - margin_scatter.bottom;
