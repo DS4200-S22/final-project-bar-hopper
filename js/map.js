@@ -137,10 +137,15 @@
                     .append("g")
                     .attr('transform', 'translate(' + margin.left + ', ' + margin.top + ')');
 
-                const convertToValidTimeString = (input) => {
+                const convertToValidTimeString = (input, overnight="False") => {
                     let toReturn;
-                    toReturn = input.substring(0, 2);
-                    return toReturn + ':' + input.substring(2, 4) + ':00';
+                    toReturn = input.substring(0, 2) + ':' + input.substring(2, 4) + ':00';
+
+                    if ("True" === overnight) {
+                        toReturn = "23:59:00"
+                    }
+        
+                    return toReturn
                 };
 
                 // creates date object out of formatted time
@@ -151,37 +156,37 @@
                 barHours = [{
                         day: 'Mon',
                         open: dataFormatter(convertToValidTimeString(currentlyUsing.mon_start)),
-                        close: dataFormatter(convertToValidTimeString(currentlyUsing.mon_end))
+                        close: dataFormatter(convertToValidTimeString(currentlyUsing.mon_end, currentlyUsing.mon_overnight))
                     },
                     {
                         day: 'Tues',
                         open: dataFormatter(convertToValidTimeString(currentlyUsing.tues_start)),
-                        close: dataFormatter(convertToValidTimeString(currentlyUsing.tues_end))
+                        close: dataFormatter(convertToValidTimeString(currentlyUsing.tues_end, currentlyUsing.tues_overnight))
                     },
                     {
                         day: 'Wed',
                         open: dataFormatter(convertToValidTimeString(currentlyUsing.wed_start)),
-                        close: dataFormatter(convertToValidTimeString(currentlyUsing.wed_end))
+                        close: dataFormatter(convertToValidTimeString(currentlyUsing.wed_end, currentlyUsing.wed_overnight))
                     },
                     {
                         day: 'Thurs',
                         open: dataFormatter(convertToValidTimeString(currentlyUsing.thurs_start)),
-                        close: dataFormatter(convertToValidTimeString(currentlyUsing.thurs_end))
+                        close: dataFormatter(convertToValidTimeString(currentlyUsing.thurs_end, currentlyUsing.thurs_overnight))
                     },
                     {
                         day: 'Fri',
                         open: dataFormatter(convertToValidTimeString(currentlyUsing.fri_start)),
-                        close: dataFormatter(convertToValidTimeString(currentlyUsing.fri_end))
+                        close: dataFormatter(convertToValidTimeString(currentlyUsing.fri_end, currentlyUsing.fri_overnight))
                     },
                     {
                         day: 'Sat',
                         open: dataFormatter(convertToValidTimeString(currentlyUsing.sat_start)),
-                        close: dataFormatter(convertToValidTimeString(currentlyUsing.sat_end))
+                        close: dataFormatter(convertToValidTimeString(currentlyUsing.sat_end, currentlyUsing.sat_overnight))
                     },
                     {
                         day: 'Sun',
                         open: dataFormatter(convertToValidTimeString(currentlyUsing.sun_start)),
-                        close: dataFormatter(convertToValidTimeString(currentlyUsing.sun_end))
+                        close: dataFormatter(convertToValidTimeString(currentlyUsing.sun_end, currentlyUsing.sun_overnight))
                     }
                 ];
 
@@ -227,6 +232,28 @@
                 svg_time.append("g")
                     .call(d3.axisLeft(yScaleDays))
 
+                // creates the tooltip that shows up when a bar is hovered
+                const tooltip = d3.select("#vis-timechart") 
+                                .append("div")
+                                .attr("class", "tooltip");
+
+                // event handler for when the bar is moused over, shows the tooltip
+                const mouseover = function(event, d) {
+                    tooltip.html("Day: " + d.day + "<br> Open: " + d.open.toLocaleTimeString() + 
+                        "<br> Close: " + d.close.toLocaleTimeString() + "<br>") 
+                            .style("opacity", 1);  
+                }
+
+                // event handler for the when the mouse is moving along the bar, tooltip moves with it
+                const mousemove = function(event, d) {
+                    tooltip.style("left", (event.pageX)+"px").style("top", event.pageY + "px");
+                }
+
+                // event handler for when the mouse is done hovering over a bar
+                const mouseleave = function(event, d) { 
+                    tooltip.style("opacity", 0); 
+                }
+
                 // create actual bar graphs
                 svg_time.append("g")
                     .selectAll("rect")
@@ -248,7 +275,10 @@
                     })
                     .attr("height", 30)
                     .attr("rx", 10)
-                    .attr("ry", 10);
+                    .attr("ry", 10)
+                    .on("mouseover", mouseover) 
+                    .on("mousemove", mousemove)
+                    .on("mouseleave", mouseleave);
 
                 // Delete previous data and add bar name
                 d3.select("#bar-name").select("h1").remove();

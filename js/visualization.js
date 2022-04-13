@@ -7,7 +7,7 @@
     // find a way to display openings that lead into the next morning (open overnight)
     // delete items that are tagged as possibly unecessary
     // use 'selected' bar once selection is implemented
-
+    
     d3.csv('https://raw.githubusercontent.com/DS4200-S22/final-project-bar-hopper/main/data/final_hours_data.csv').then(data => {
         // change this later when interactivity is added
         // using just the first line of data for now because this chart relies on a selection to be made
