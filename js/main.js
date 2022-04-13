@@ -30,9 +30,18 @@ function isBrushed(x0, x1, y0, y1, cx, cy) {
     return x0 <= cx && cx <= x1 && y0 <= cy && cy <= y1; // This return TRUE or FALSE depending on if the points is in the selected area
 }
 
-(function () {
-    d3.json("https://raw.githubusercontent.com/DS4200-S22/final-project-bar-hopper/main/data/boston.geojson").then(function (mapData) {
-        d3.csv("https://raw.githubusercontent.com/DS4200-S22/final-project-bar-hopper/main/data/final_merged_data.csv").then(function (mergedData) {
+// High level variables to reference in linking visualizations
+// Currently selected bar
+let currentlyUsing;
+// Bar hours of operation data
+let barHours;
+
+(function() {
+    d3.json("https://raw.githubusercontent.com/DS4200-S22/final-project-bar-hopper/main/data/boston.geojson").then(function(mapData) {
+        d3.csv("https://raw.githubusercontent.com/DS4200-S22/final-project-bar-hopper/main/data/final_merged_data.csv").then(function(mergedData) {
+
+            // Set initial bar to the first record
+            currentlyUsing = mergedData[0];
 
             // Map Dimension and Projection
             const widthMap = 500;
@@ -48,9 +57,36 @@ function isBrushed(x0, x1, y0, y1, cx, cy) {
             const innerHeightScatter = heightScatter - margin_scatter.top - margin_scatter.bottom;
             const k = heightScatter / widthScatter;
 
+            // Time Dimension
+            const widthTime = 250;
+            const heightTime = 250;
+            const margin = { left: 25, right: 25, bottom: 25, top: 25 };
+
+            // set up d3 time formatting
+            // delete if still unecessary after next pm
+            const dayFormatter = d3.timeFormat("%w");
+            const weekFormatter = d3.timeFormat("%U");
+            const hourFormatter = d3.timeFormat("%X");
+            const yAxisFormatter = d3.timeFormat("%m/%d");
+
+            // Radar Dimension
+            const widthRadar = 300;
+            const heightRadar = 300;
+
+            // Chart settings
+            let presets = {
+                zoom: 20,
+                userSize: 10,
+                rangeSize: 100
+            }
+
+            // Radial Dimension
+            const widthRadial = 300;
+            const heightRadial = 300;
+
             // Svg Map
-            let svg_map;
-            let circles_map;
+            let svgMap;
+            let circlesMap;
             let brushMap;
             let brushXMap;
             let brushYMap;
@@ -65,6 +101,399 @@ function isBrushed(x0, x1, y0, y1, cx, cy) {
             let xScaleScatter;
             let yScaleScatter;
 
+            // Svg Time
+            const tagIdTime = "#vis-timechart";
+            let svgTime = d3.select(tagIdTime)
+                .append("svg")
+                .attr("width", widthTime + margin.right + margin.left)
+                .attr("height", heightTime + margin.top + margin.bottom)
+                .append("g")
+                .attr('transform', 'translate(' + margin.left + ', ' + margin.top + ')');
+
+            // Svg Radar
+            const tagIdRadar = "#vis-radar"
+            let svgRadar = d3.select(tagIdRadar)
+                .append("svg")
+                .attr("width", widthRadar)
+                .attr("height", heightRadar)
+
+            let gRadar = svgRadar.append("g");
+
+            // Svg Radial
+            const tagIdRadial = "#vis-radial";
+            let svgRadial = d3.select(tagIdRadial)
+                .append("svg")
+                .attr("width", widthRadial) // Sets the width of the svg
+                .attr("height", heightRadial) // Sets the height of the svg
+                .attr("viewBox", [0, 0, widthRadial, heightRadial]); // Sets the viewbox of the svg
+            const center = {
+                x: widthRadial / 2,
+                y: heightRadial / 2,
+            };
+
+            // Function that creates the time graph for the selected bar
+            function createTimeGraph() {
+                // Delete old time chart and replace with new
+                d3.select("#vis-timechart").selectAll("svg").remove();
+
+                svgTime = d3.select("#vis-timechart")
+                    .append("svg")
+                    .attr("width", widthTime + margin.right + margin.left)
+                    .attr("height", heightTime + margin.top + margin.bottom)
+                    .append("g")
+                    .attr('transform', 'translate(' + margin.left + ', ' + margin.top + ')');
+
+                const convertToValidTimeString = (input) => {
+                    let toReturn;
+                    toReturn = input.substring(0, 2);
+                    return toReturn + ':' + input.substring(2, 4) + ':00';
+                };
+
+                // creates date object out of formatted time
+                const dataFormatter = d3.timeParse('%H:%M:%S');
+
+                // the actual date is irrelivent, only intiallized because d3 works better with date()
+                // obects, will only display times and the day string
+                barHours = [{
+                        day: 'Mon',
+                        open: dataFormatter(convertToValidTimeString(currentlyUsing.mon_start)),
+                        close: dataFormatter(convertToValidTimeString(currentlyUsing.mon_end))
+                    },
+                    {
+                        day: 'Tues',
+                        open: dataFormatter(convertToValidTimeString(currentlyUsing.tues_start)),
+                        close: dataFormatter(convertToValidTimeString(currentlyUsing.tues_end))
+                    },
+                    {
+                        day: 'Wed',
+                        open: dataFormatter(convertToValidTimeString(currentlyUsing.wed_start)),
+                        close: dataFormatter(convertToValidTimeString(currentlyUsing.wed_end))
+                    },
+                    {
+                        day: 'Thurs',
+                        open: dataFormatter(convertToValidTimeString(currentlyUsing.thurs_start)),
+                        close: dataFormatter(convertToValidTimeString(currentlyUsing.thurs_end))
+                    },
+                    {
+                        day: 'Fri',
+                        open: dataFormatter(convertToValidTimeString(currentlyUsing.fri_start)),
+                        close: dataFormatter(convertToValidTimeString(currentlyUsing.fri_end))
+                    },
+                    {
+                        day: 'Sat',
+                        open: dataFormatter(convertToValidTimeString(currentlyUsing.sat_start)),
+                        close: dataFormatter(convertToValidTimeString(currentlyUsing.sat_end))
+                    },
+                    {
+                        day: 'Sun',
+                        open: dataFormatter(convertToValidTimeString(currentlyUsing.sun_start)),
+                        close: dataFormatter(convertToValidTimeString(currentlyUsing.sun_end))
+                    }
+                ];
+
+                // set up date range axis
+                // delete if still unecessary after next pm
+                let firstDay = d3.timeDay.floor(new Date(barHours[0].open));
+                let lastDay = d3.timeDay.ceil(new Date(barHours[barHours.length - 1].close));
+                let dateRange = [d3.min(barHours, function(d) { return d3.timeDay.floor(new Date(d.open)) }),
+                    d3.max(barHours, function(d) { return d3.timeDay.ceil(new Date(d.close)) })
+                ];
+
+                let xScale = d3.scaleTime()
+                    .domain([0, 24])
+                    .range([0, widthTime]);
+
+                // delete if no longer using after next pm
+                let yScale = d3.scaleTime()
+                    .domain(dateRange)
+                    .range([0, heightTime]);
+
+                // use days for y axis rather than dates
+                let yScaleDays = d3.scaleBand()
+                    .domain(barHours.map(function(d) { return d.day }))
+                    .range([0, heightTime])
+
+                let fullScale = d3.scaleTime()
+                    .domain([d3.timeHour(new Date(2014, 0, 1, 0, 0, 0)),
+                        d3.timeHour(new Date(2014, 0, 2, 0, 0, 0)),
+                    ])
+                    .range([0, widthTime]);
+
+                // x axis
+                svgTime.append("g")
+                    .attr("transform", "translate(0," + heightTime + ")")
+                    .call(d3.axisBottom(xScale)
+                        .scale(fullScale)
+                        .tickFormat(d3.timeFormat("%H:%M")));
+
+                // y axis new
+                // uses days instead of dates
+                svgTime.append("g")
+                    .call(d3.axisLeft(yScaleDays))
+
+                // create actual bar graphs
+                svgTime.append("g")
+                    .selectAll("rect")
+                    .data(barHours)
+                    .enter()
+                    .append("rect")
+                    .attr("class", "time-bar")
+                    .attr("x", function(d) {
+                        let h = hourFormatter(new Date(d.open)).split(":"), // changes datum from string, to proper Date Object, back to hour string and splits
+                            xh = parseFloat(h[0]) + parseFloat(h[1] / 60); // time (hour and minute) as decimal
+                        return xScale(xh);;
+                    })
+                    //.attr("y", function (d) { return yScale(d3.timeDay.floor(new Date(d.open))) })
+                    .attr("y", function(d) { return yScaleDays(d.day) })
+                    .attr("width", function(d) {
+                        let hstart = new Date(d.open),
+                            hstop = new Date(d.close);
+                        return xScale((hstop - hstart) / 3600000); // divide to convert to hours
+                    })
+                    .attr("height", 30)
+                    .attr("rx", 10)
+                    .attr("ry", 10);
+
+                // Delete previous data and add bar name
+                d3.select("#bar-name").select("h1").remove();
+                d3.select("#bar-name")
+                    .append("h1")
+                    .append("a")
+                    .attr("href", currentlyUsing.url)
+                    .text(currentlyUsing.name);
+
+                //     // Delete previous data and add Yelp link
+                //     d3.select("#yelp-link").select("a").remove();
+                //     d3.select("#yelp-link")
+                //         .append("a")
+                //         .attr("href", currentlyUsing.url)
+                //         .html("Yelp Page");
+            };
+
+            // Function that creates the radial graph for the selected bar
+            function createRadialGraph() {
+                // Delete old radial graph and replace with new
+                d3.select(tagIdRadial).selectAll("svg").remove()
+
+                svgRadial = d3.select(tagIdRadial)
+                    .append("svg")
+                    .attr("width", widthRadial) // Sets the width of the svg
+                    .attr("height", heightRadial) // Sets the height of the svg
+                    .attr("viewBox", [0, 0, widthRadial, heightRadial]); // Sets the viewbox of the svg
+
+                // Parse the current selected bar's location data
+                let currentlyUsingLocation = {
+                    lat: currentlyUsing.latitude,
+                    long: currentlyUsing.longitude
+                }
+
+                const path = d3.path();
+                const maxDist = d3.max(mergedData, d => {
+                    return distance(currentlyUsingLocation, { lat: d['latitude'], long: d['longitude'] })
+                })
+                mergedData.forEach(d => {
+                    path.moveTo(center.x, center.y);
+                    const barLocation = {
+                        lat: d['latitude'],
+                        long: d['longitude'],
+                    };
+                    const dist = distance(currentlyUsingLocation, barLocation) / maxDist;
+                    const bear = bearing(currentlyUsingLocation, barLocation);
+                    const x = dist * center.x * Math.cos(bear) + center.x;
+                    const y = dist * center.y * Math.sin(bear) + center.y;
+                    path.lineTo(x, y);
+                    svgRadial
+                        .append('circle')
+                        .attr('cx', x)
+                        .attr('cy', y)
+                        .attr('r', 2)
+                        .style('fill', 'blue')
+                });
+
+                svgRadial
+                    .append('path')
+                    .attr('stroke', 'black')
+                    .attr('opacity', 0.3)
+                    .attr('d', path);
+
+                svgRadial
+                    .append('circle')
+                    .attr('cx', center.x)
+                    .attr('cy', center.y)
+                    .attr('r', 5)
+                    .style('fill', 'orange');
+            };
+
+            // Function that creates the radar graph for the selected bar
+            function createRadarGraph() {
+                // Delete old radar graph and replace with new
+                d3.select(tagIdRadar).selectAll("svg").remove()
+
+                svgRadar = d3.select(tagIdRadar)
+                    .append("svg")
+                    .attr("width", widthRadar)
+                    .attr("height", heightRadar)
+
+                gRadar = svgRadar.append("g");
+
+
+                // // Parse the current selected bar's location data
+                let user = {
+                    lat: currentlyUsing.latitude,
+                    long: currentlyUsing.longitude
+                }
+
+                // const user = {
+                //     // User
+                //     long: -71.0678,
+                //     lat: 42.3522,
+                //     name: "User"
+                // }
+
+                let albersProjection = d3.geoAlbers()
+                    .scale(190000 * presets.zoom)
+                    .rotate([71.057, 42.313 - 42.3522])
+                    .center([-71.0678 + 71.057, 42.313])
+                    .translate([widthRadar / 2, heightRadar / 2]);
+
+                // let albersProjection = d3.geoAlbers()
+                //     .scale(190000 * presets.zoom)
+                //     .rotate([71.057, 42.313 - user.lat])
+                //     .center([user.long + 71.057, 42.313])
+                //     .translate([width_radar / 2, height_radar / 2]);
+
+                // Draw the map
+                gRadar.selectAll("path")
+                    .data(mapData.features)
+                    .join("path")
+                    .attr("fill", "#b8b8b8")
+                    .attr("d", d3.geoPath()
+                        .projection(albersProjection)
+                    )
+                    .style("stroke", "black")
+                    .style("opacity", .3)
+
+                // Add a tooltip div. Here I define the general feature of the tooltip: stuff that do not depend on the data point.
+                // Its opacity is set to 0: we don't see it by default.
+                const tooltip = d3.select("#vis-radar")
+                    .append("div")
+                    .style("opacity", 0)
+                    .attr("class", "tooltip")
+                    // .style("background-color", "white")
+                    .style("border", "solid")
+                    .style("border-width", "1px")
+                    .style("border-radius", "5px")
+                    .style("padding", "10px")
+
+                // A function that change this tooltip when the user hover a point.
+                // Its opacity is set to 1: we can now see it. Plus it set the text and position of tooltip depending on the datapoint (d)
+                const mouseover = function(event, d) {
+                    // If the current point is visible, show tooltip
+                    if (d3.select(this).style("opacity") != 0) {
+                        tooltip
+                            .style("opacity", 1)
+                    }
+                }
+
+                let mousemove = function(event, d) {
+                    tooltip
+                        .html("This establishment is: " + d.name + "<br> Price: " + d.price + "<br> Rating: " + d.rating + "<br>")
+                        .style("left", event.pageX + "px") // It is important to put the +90: other wise the tooltip is exactly where the point is an it creates a weird effect
+                        .style("top", event.pageY + "px")
+                }
+
+                // A function that change this tooltip when the leaves a point: just need to set opacity to 0 again
+                let mouseleave = function(event, d) {
+                    tooltip
+                        .transition()
+                        .duration(200)
+                        .style("opacity", 0)
+                }
+
+                // Add circles:
+                svgRadar
+                    .selectAll("myCircles")
+                    .data(mergedData)
+                    .join("circle")
+                    .attr("id", 'bar')
+                    .attr("class", d => "p" + d.price.length) // price class
+                    .attr("cx", d => albersProjection([d.longitude, d.latitude])[0])
+                    .attr("cy", d => albersProjection([d.longitude, d.latitude])[1])
+                    .attr("r", 6)
+                    .style("fill", "#0000ff")
+                    // .style("fill", "69b3a2")
+                    .style("opacity", 1)
+                    .attr("stroke", "#000000")
+                    .attr("stroke-width", 2)
+                    .attr("fill-opacity", .4)
+                    .on("mouseover", mouseover)
+                    .on("mousemove", mousemove)
+                    .on("mouseleave", mouseleave);
+
+
+                let zoom = d3.zoom()
+                    .scaleExtent([0.05, 16])
+                    .on('zoom', updateChart);
+
+                svgRadar.call(zoom);
+
+
+                // A function that updates the chart when the user zoom and thus new boundaries are available
+                function updateChart(event) {
+
+                    gRadar.selectAll('path')
+                        .attr('transform', event.transform);
+
+                    svgRadar.selectAll("#bar")
+                        .attr('transform', event.transform)
+                        .attr('r', 6 / event.transform.k) // Scale down zoom of circles
+                        .attr('stroke-width', 2 / event.transform.k); // Scale down zoom of circles
+
+                    svgRadar.selectAll('#user')
+                        .attr('transform', event.transform)
+                        .attr('r', presets.userSize / event.transform.k) // Scale down zoom of circles
+                        .attr('stroke-width', 2 / event.transform.k); // Scale down zoom of circles
+
+                    svgRadar.selectAll('#range')
+                        .attr('transform', event.transform)
+                        // .attr('r', presets.rangeSize / event.transform.k) // Scale down zoom of circles
+                        .attr('stroke-width', 2 / event.transform.k); // Scale down zoom of circles
+                }
+
+                // add markers
+                svgRadar.append("circle")
+                    .attr("id", "user")
+                    // .attr("cx", albersProjection([user.long, user.lat]))
+                    // .attr("cy", albersProjection([user.long, user.lat]))
+                    .attr("cx", albersProjection([user.long, user.lat])[0])
+                    .attr("cy", albersProjection([user.long, user.lat])[1])
+                    .attr("r", presets.userSize)
+                    .style("fill", "red")
+                    .style("opacity", 1)
+                    .attr("stroke", "#8c0315")
+                    .attr("stroke-width", 2)
+                    .attr("fill-opacity", .4);
+
+                // add markers
+                svgRadar.append("circle")
+                    .attr("id", "range")
+                    // .attr("cx", albersProjection([user.long, user.lat]))
+                    // .attr("cy", albersProjection([user.long, user.lat]))
+                    .attr("cx", albersProjection([user.long, user.lat])[0])
+                    .attr("cy", albersProjection([user.long, user.lat])[1])
+                    .attr("r", 4)
+                    .style("fill", "lightgreen")
+                    .style("opacity", 1)
+                    .attr("stroke", "#0b9e35")
+                    .attr("stroke-width", 2)
+                    .attr("fill-opacity", .4);
+            }
+
+            // Create graphs on initial load for the default first record
+            createTimeGraph();
+            createRadialGraph();
+            createRadarGraph();
+
             // Sets up channels
             const color = {
                 "$": "#eb4034",
@@ -76,11 +505,13 @@ function isBrushed(x0, x1, y0, y1, cx, cy) {
             // Sets up filter check boxs
             const rating_choices = new Set();
             const price_choices = new Set();
+
             function updateRatingChoices({ checked, value }) {
                 console.log(checked, value);
                 if (checked) rating_choices.add(value);
                 else rating_choices.delete(value);
             }
+
             function updatePriceChoices({ checked, value }) {
                 console.log(checked, value);
                 if (checked) price_choices.add(value);
@@ -104,15 +535,15 @@ function isBrushed(x0, x1, y0, y1, cx, cy) {
                 .style("border-width", "1px")
                 .style("border-radius", "5px")
                 .style("padding", "10px")
-            const mouseover = function () {
+            const mouseover = function() {
                 tooltip.style("opacity", 1)
             }
-            let mousemove = function (event, d) {
+            let mousemove = function(event, d) {
                 tooltip.html("This establishment is: " + d.name + "<br> Price: " + d.price + "<br> Rating: " + d.rating + "<br> Review Counts:" + d["review_count"])
                     .style("left", (event.pageX + 10) + "px") // It is important to put the +90: other wise the tooltip is exactly where the point is an it creates a weird effect
                     .style("top", (event.pageY - 45) + "px")
             }
-            const mouseleave = function () {
+            const mouseleave = function() {
                 tooltip.transition()
                     .duration(200)
                     .style("opacity", 0)
@@ -122,11 +553,11 @@ function isBrushed(x0, x1, y0, y1, cx, cy) {
             {
                 // Sets up the initial svg
                 const tagId_map = "#vis-map";
-                svg_map = d3.select(tagId_map)
+                svgMap = d3.select(tagId_map)
                     .append("svg")
                     .attr("width", widthMap)
                     .attr("height", heightMap);
-                let g_map = svg_map.append("g");
+                let g_map = svgMap.append("g");
 
                 // Draw the map
                 g_map.selectAll("path")
@@ -151,10 +582,13 @@ function isBrushed(x0, x1, y0, y1, cx, cy) {
                     .range([0, heightMap])
                     .domain([lat1, lat2])
                 brushMap = d3.brush()
-                    .extent([[0, 0], [widthMap, heightMap]])
+                    .extent([
+                        [0, 0],
+                        [widthMap, heightMap]
+                    ])
                     .on("start", brushClear)
                     .on("brush", brushUpdate);
-                svg_map.call(brushMap);
+                svgMap.call(brushMap);
             }
 
             // Sets up Scatter plot
@@ -283,20 +717,20 @@ function isBrushed(x0, x1, y0, y1, cx, cy) {
 
             // Sets up brush functions
             function brushClear() {
-                svg_map.call(brushMap.move, null);
+                svgMap.call(brushMap.move, null);
             }
 
             function brushUpdate(brushEvent) {
                 if (brushEvent !== null && brushEvent.selection !== null) {
                     // brushed data points
                     let brushed = []
-                    // Find coordinates of brushed region 
+                        // Find coordinates of brushed region 
                     const brushCoords = brushEvent.selection;
                     const x0 = brushCoords[0][0];
                     const x1 = brushCoords[1][0];
                     const y0 = brushCoords[0][1];
                     const y1 = brushCoords[1][1];
-                    svg_map.selectAll("circle")
+                    svgMap.selectAll("circle")
                         .classed("selected", (d) => {
                             if (isBrushed(x0, x1, y0, y1, brushXMap(parseFloat(d["longitude"])), brushYMap(parseFloat(d["latitude"])))) {
                                 brushed.push(d);
@@ -318,9 +752,9 @@ function isBrushed(x0, x1, y0, y1, cx, cy) {
                 newData = price_choices.size + rating_choices.size > 0 ? newData : mergedData;
 
                 // Paints the map
-                circles_map = svg_map.selectAll("circle")
+                circlesMap = svgMap.selectAll("circle")
                     .data(newData, d => d["id"]);;
-                circles_map.enter()
+                circlesMap.enter()
                     .append("circle")
                     .attr("class", d => "p" + d.price.length + " r" + d.rating * 10) // price and rating classes
                     .attr("id", (d) => d.id) // unique id
@@ -333,8 +767,17 @@ function isBrushed(x0, x1, y0, y1, cx, cy) {
                     // .attr("fill-opacity", .4)
                     .on("mouseover", mouseover)
                     .on("mousemove", mousemove)
-                    .on("mouseleave", mouseleave);
-                circles_map.exit()
+                    .on("mouseleave", mouseleave)
+                    .on("click", function(event, d) {
+                        // Redirect to bar's yelp page
+                        // window.location = d.url;
+                        // Pass data to other charts
+                        currentlyUsing = d;
+                        createTimeGraph();
+                        createRadialGraph();
+                        createRadarGraph();
+                    });
+                circlesMap.exit()
                     .remove();
 
                 paintScatterPlot(newData);
