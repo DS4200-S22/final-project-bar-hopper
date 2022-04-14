@@ -46,7 +46,7 @@ h3 {
 
 .flex-child {
     flex: 1;
-    border: 2px solid black;
+    /* border: 2px solid black; */
 }
 
 #bar-name {
