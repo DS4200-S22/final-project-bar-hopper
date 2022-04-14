@@ -50,7 +50,7 @@ function showLongitude(longitude) {
 }
 
 function showClosestBar({name, dist}) {
-    closestBarElement.innerHTML = `Closest Bar Name: ${name}`;
+    closestBarElement.innerHTML = `Closest Bar Name: ${name || "unknown"}`;
     closestDistanceElement.innerHTML = `Distance(km): ${dist}`;
 }
 
