@@ -57,3 +57,69 @@ h3 {
     opacity: 1 !important;
     stroke-width: 5px;
 }
+
+.tooltip {
+    padding: 6px;
+    background: rgba(0, 0, 0, 0.8);
+    color: #fff;
+    border-width: 1px;
+    border-style: solid;
+    border-radius: 4px;
+    font-size: 12px;
+    position: absolute;
+}
+
+.center {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.spaceEvenly {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+}
+
+.circle,
+.label {
+    display: inline-block;
+}
+
+.circle {
+    width: 10px;
+    height: 10px;
+    margin-right: 10px;
+    border-radius: 10px;
+}
+
+.ratingCheck,
+.priceCheck {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 5px;
+    border-width: 1px;
+    border-radius: 5px;
+    border-style: solid;
+}
+
+.checkbox {
+    width: 15px;
+    height: 15px;
+}
+
+#vis-scatter {
+    margin-top: 20px;
+}
+
+.location-permission-error {
+    text-align: center;
+    color: tomato;
+}
+
+.location-center {
+    stroke: tomato;
+    opacity: 1 !important;
+    stroke-width: 4px;
+}
