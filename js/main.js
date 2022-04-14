@@ -38,8 +38,8 @@ const longitudeElement = document.getElementById("vis-longitude-input");
 const locationElement = document.getElementById("vis-radial-locate-me");
 const closestBarElement = document.getElementById("closet-bar");
 const closestDistanceElement = document.getElementById("closet-dist");
-
-
+const slideElement = document.getElementById("vis-radial-distance-slide");
+const labelElement = document.getElementById("vis-radial-distance-label");
 
 function showLatitude(latitude) {
     latitudeElement.value = `latitude: ${latitude}`;
@@ -52,6 +52,10 @@ function showLongitude(longitude) {
 function showClosestBar({name, dist}) {
     closestBarElement.innerHTML = `Closest Bar Name: ${name}`;
     closestDistanceElement.innerHTML = `Distance(km): ${dist}`;
+}
+
+function showDistance(dist) {
+    labelElement.innerHTML = `Distance range (km): ${dist}`;
 }
 
 function showError(error) {
@@ -152,7 +156,7 @@ let barHours;
 
             // Time Dimension
             const widthTime = 250;
-            const heightTime = 385;
+            const heightTime = 435;
             const margin = { left: 40, right: 25, bottom: 25, top: 25 };
 
             // Set up d3 time formatting
@@ -169,8 +173,8 @@ let barHours;
             };
 
             // Radial Dimension
-            const widthRadial = 400;
-            const heightRadial = 300;
+            const widthRadial = 500;
+            const heightRadial = 350;
 
             // Svg Map
             let svgMap;
@@ -187,20 +191,19 @@ let barHours;
             // Svg Time
             let svgTime;
 
-            // Svg Radar
-            let svgRadar;
-
             // Svg Radial
             let svgRadial; // Sets the viewbox of the svg
             const center = {
                 x: widthRadial / 2,
                 y: heightRadial / 2,
             };
-            // Default NEU Snell location
+            // Default Boston University location
             let currentLocation = {
                 lat: 42.3505,
                 long: -71.1054,
             };
+            // Maximum distance
+            let maxDistance = Infinity;
 
             // Display data for radial and scatter plots
             let filteredData = mergedData;
@@ -364,9 +367,6 @@ let barHours;
                     .attr("href", currentlyUsing.url)
                     .text(currentlyUsing.name);
             };
-
-            // Create graphs on initial load for the default first record
-            createTimeGraph();
 
             // Sets Up Main map
             {
@@ -643,25 +643,26 @@ let barHours;
                 });
                 filteredData.forEach(d => {
                     const { latitude, longitude } = d;
-                    const barLocation = {
-                        lat: latitude,
-                        long: longitude,
-                    };
-                    const dist = distance(currentLocation, barLocation) / maxDist;
-                    const bear = bearing(currentLocation, barLocation) + 270;
-                    const x = dist * (widthRadial / 2 - 4) * Math.cos(bear * Math.PI / 180) + center.x;
-                    const y = dist * (heightRadial / 2 - 4) * Math.sin(bear * Math.PI / 180) + center.y;
-                    if (closestBar.dist > dist * maxDist) {
-                        closestBar.dist = dist * maxDist;
-                        closestBar.name = d["name"]
+                    const barLocation = {lat: latitude, long: longitude};
+                    const dist = distance(currentLocation, barLocation);
+                    // Filter out data by max range
+                    if (dist <= maxDistance) {
+                        const normalizedDist = maxDist < maxDistance ? dist / maxDist : dist / maxDistance;
+                        const bear = bearing(currentLocation, barLocation) + 270;
+                        const x = normalizedDist * (widthRadial / 2 - 4) * Math.cos(bear * Math.PI / 180) + center.x;
+                        const y = normalizedDist * (heightRadial / 2 - 4) * Math.sin(bear * Math.PI / 180) + center.y;
+                        if (closestBar.dist > dist) {
+                            closestBar.dist = dist;
+                            closestBar.name = d["name"]
+                        }
+                        radialData.push({
+                            ...d,
+                            x,
+                            y,
+                            dist: dist,
+                            bearing: bear,
+                        });
                     }
-                    radialData.push({
-                        ...d,
-                        x,
-                        y,
-                        dist: dist * maxDist,
-                        bearing: bear,
-                    });
                 });
                 // Remove and draw the circles
                 svgRadial.selectAll("circle")
@@ -674,7 +675,8 @@ let barHours;
                     .attr("cx", d => d["x"])
                     .attr("cy", d => d["y"])
                     .attr("fill", d => color[d['price']] || 'black')
-                    .attr('r', 4)
+                    .attr('r', 6)
+                    .style("opacity", 0.8)
                     .on("mouseover", mouseover)
                     .on("mousemove", mousemoveRadial)
                     .on("mouseleave", mouseleave)
@@ -684,8 +686,8 @@ let barHours;
                 svgRadial.append("rect")
                     .attr("x", center.x)
                     .attr("y", center.y)
-                    .attr("width", 10)
-                    .attr("height", 10)
+                    .attr("width", 9)
+                    .attr("height", 9)
                     .attr("class", "location-center")
                     .style("fill", "black")
                     .on("mouseover", mouseover)
@@ -731,13 +733,22 @@ let barHours;
                 paintRadialPlot();
             }
 
+            function updateMaxDistance(dist) {
+                maxDistance = dist;
+                showDistance(dist);
+                paintRadialPlot();
+            }
+
             // Sets up locations inputs
             {
                 locationElement.addEventListener("click", getLocation);
                 latitudeElement.addEventListener("change", ({ target }) => updateLatitude(target.value));
                 longitudeElement.addEventListener("change", ({ target }) => updateLongitude(target.value));
+                slideElement.addEventListener("change", ({ target }) => updateMaxDistance(target.value))
             }
 
+            // Create graphs on initial load for the default first record
+            createTimeGraph();
             updateAll();
         });
     });
