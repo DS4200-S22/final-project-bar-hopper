@@ -613,9 +613,11 @@ let barHours;
                     .remove();
             }
 
+            let mousemoveRadial;
+
             // Paints the radial plot
             function paintRadialPlot() {
-                mousemove = function(event, d) {
+                mousemoveRadial = function(event, d) {
                     tooltip.html("This establishment is: " + d.name + "<br> Distance(km): " + (Math.round(d.dist * 100) / 100) + "<br> Bearing: " + (Math.round((d.bearing - 270) * 100) / 100))
                         .style("left", (event.pageX + 10) + "px")
                         .style("top", (event.pageY - 45) + "px");
@@ -656,7 +658,7 @@ let barHours;
                     .attr("fill", d => color[d['price']] || 'black')
                     .attr('r', 4)
                     .on("mouseover", mouseover)
-                    .on("mousemove", mousemove)
+                    .on("mousemove", mousemoveRadial)
                     .on("mouseleave", mouseleave)
                     // Remove and Draw the center rect 
                 svgRadial.selectAll("rect")
