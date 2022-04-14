@@ -262,8 +262,6 @@ let barHours;
                     }
                 ];
 
-                console.log(barHours);
-
                 // Set up date range axis
                 let firstDay = d3.timeDay.floor(new Date(barHours[0].open));
                 let lastDay = d3.timeDay.ceil(new Date(barHours[barHours.length - 1].close));
@@ -582,8 +580,6 @@ let barHours;
                     .on("mousemove", mousemove)
                     .on("mouseleave", mouseleave)
                     .on("click", function(event, d) {
-                        // Redirect to bar's yelp page
-                        // window.location = d.url;
                         // Pass data to other charts
                         currentlyUsing = d;
                         createTimeGraph();
@@ -672,7 +668,7 @@ let barHours;
                     .style("fill", "black");
             }
 
-            // TODO set up button
+            // Function to get location when button is clicked
             function getLocation() {
                 if (navigator.geolocation) {
                     navigator.geolocation.getCurrentPosition(getLocationCallback, showError);
