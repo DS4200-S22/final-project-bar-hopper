@@ -570,7 +570,7 @@ let barHours;
             function updateAll() {
                 // Filters the data
                 if (price_choices.size > 0) newData = mergedData.filter((d, i) => price_choices.has(d["price"]));
-                if (rating_choices.size > 0) newData = mergedData.filter((d, i) => rating_choices.has(d["rating"]));
+                if (rating_choices.size > 0) newData = newData.filter((d, i) => rating_choices.has(d["rating"]));
                 newData = price_choices.size + rating_choices.size > 0 ? newData : mergedData;
 
                 // Paints the map
