@@ -624,6 +624,12 @@ let barHours;
                     .style("top", (event.pageY - 45) + "px");
             }
 
+            const mousemoveYouRadial = function (event, d) {
+                tooltip.html("This is you!")
+                    .style("left", (event.pageX + 10) + "px")
+                    .style("top", (event.pageY - 45) + "px");
+            }
+
             // Paints the radial plot
             function paintRadialPlot() {
                 const radialData = [];
@@ -681,7 +687,10 @@ let barHours;
                     .attr("width", 10)
                     .attr("height", 10)
                     .attr("class", "location-center")
-                    .style("fill", "black");
+                    .style("fill", "black")
+                    .on("mouseover", mouseover)
+                    .on("mousemove", mousemoveYouRadial)
+                    .on("mouseleave", mouseleave);
                 showClosestBar(closestBar)
             }
 
