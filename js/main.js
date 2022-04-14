@@ -51,7 +51,7 @@ function showLongitude(longitude) {
 
 function showClosestBar({ name, dist }) {
     closestBarElement.innerHTML = `Closest Bar Name: ${name || "unknown"}`;
-    closestDistanceElement.innerHTML = `Distance(km): ${Math.round(dist * 100) / 100}`;
+    closestDistanceElement.innerHTML = `Distance(m): ${Math.round(dist * 100) / 100}`;
 }
 
 function showDistance(dist) {
@@ -628,7 +628,7 @@ let barHours;
             }
 
             const mousemoveRadial = function(event, d) {
-                tooltip.html("This establishment is: " + d.name + "<br> Distance(km): " + (Math.round(d.dist * 100) / 100) + "<br> Bearing: " + (Math.round((d.bearing - 270) * 100) / 100))
+                tooltip.html("This establishment is: " + d.name + "<br> Distance(m): " + (Math.round(d.dist * 100) / 100) + "<br> Bearing: " + (Math.round((d.bearing - 270) * 100) / 100))
                     .style("left", (event.pageX + 10) + "px")
                     .style("top", (event.pageY - 45) + "px");
             }
