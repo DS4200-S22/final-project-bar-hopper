@@ -581,12 +581,7 @@ let barHours;
             // Redraw Map, Scatter, Radial
             function updateAll() {
                 // Filters the data
-                let newData = [];
-                if (price_choices.size > 0) newData = mergedData.filter((d, i) => price_choices.has(d["price"]));
-                if (rating_choices.size > 0) {
-                    newData = newData.length > 0 ? newData.filter((d, i) => rating_choices.has(d["rating"])) : mergedData.filter((d, i) => rating_choices.has(d["rating"]))
-                }
-                newData = price_choices.size + rating_choices.size > 0 ? newData : mergedData;
+                const newData = filterData(mergedData);
 
                 // Paints the map
                 circlesMap = svgMap.selectAll("circle")
