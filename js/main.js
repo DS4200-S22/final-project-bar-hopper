@@ -559,10 +559,22 @@ let barHours;
                             }
                             return false;
                         })
-                    filteredData = brushed.length > 0 ? brushed : mergedData;
+                    filteredData = filterData(brushed.length > 0 ? brushed : mergedData);
                     paintScatterPlot();
                     paintRadialPlot();
                 }
+            }
+
+            // Filters the data based on checkbox choices
+            function filterData(data) {
+                // Filters the data
+                let newData = [];
+                if (price_choices.size > 0) newData = data.filter((d, i) => price_choices.has(d["price"]));
+
+                if (rating_choices.size > 0) {
+                    newData = newData.length > 0 ? newData.filter((d, i) => rating_choices.has(d["rating"])) : mergedData.filter((d, i) => rating_choices.has(d["rating"]))
+                }
+                return price_choices.size + rating_choices.size > 0 ? newData : data;
             }
 
 
