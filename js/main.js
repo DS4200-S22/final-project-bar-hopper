@@ -710,7 +710,6 @@ let barHours;
 
             // Paints the radial plot
             function paintRadialPlot(data) {
-                console.log(data);
                 const radialData = [];
                 const maxDist = d3.max(data, d => {
                     const { latitude, longitude } = d;
@@ -724,9 +723,9 @@ let barHours;
                     }
                     const dist = distance(currentLocation, barLocation) / maxDist;
                     const bear = bearing(currentLocation, barLocation);
-                    console.log(Math.cos(bear), Math.sin(bear), bear);
-                    const x = dist * (center.x - 4) * Math.cos(bear) + center.x;
-                    const y = dist * (center.y - 4) * Math.sin(bear) + center.y;
+                    const x = dist * (widthRadial / 2 - 4) * Math.cos(bear) + center.x;
+                    const y = dist * (heightRadial / 2 - 4) * Math.sin(bear) + center.y;
+                    console.log(x, y, bear);
                     radialData.push({
                         ...d,
                         x,
@@ -740,8 +739,9 @@ let barHours;
                     .attr("id", d => d["id"])
                     .attr("cx", d => d["x"])
                     .attr("cy", d => d["y"])
+                    .attr("stroke", d => color[d['price']] || 'black')
                     .attr('r', 4)
-                    .style("opacity", 0.4)
+                    .style("opacity", 0.5)
                     .on("mouseover", mouseover)
                     .on("mousemove", mousemove)
                     .on("mouseleave", mouseleave)
