@@ -69,9 +69,9 @@ let currentlyUsing;
 // Bar hours of operation data
 let barHours;
 
-(function () {
-    d3.json("https://raw.githubusercontent.com/DS4200-S22/final-project-bar-hopper/main/data/boston.geojson").then(function (mapData) {
-        d3.csv("https://raw.githubusercontent.com/DS4200-S22/final-project-bar-hopper/main/data/final_merged_data.csv").then(function (mergedData) {
+(function() {
+    d3.json("https://raw.githubusercontent.com/DS4200-S22/final-project-bar-hopper/main/data/boston.geojson").then(function(mapData) {
+        d3.csv("https://raw.githubusercontent.com/DS4200-S22/final-project-bar-hopper/main/data/final_merged_data.csv").then(function(mergedData) {
 
             currentlyUsing = mergedData[0];
 
@@ -98,15 +98,15 @@ let barHours;
                 .style("border-width", "1px")
                 .style("border-radius", "5px")
                 .style("padding", "10px")
-            const mouseover = function () {
+            const mouseover = function() {
                 tooltip.style("opacity", 1)
             }
-            let mousemove = function (event, d) {
+            let mousemove = function(event, d) {
                 tooltip.html("This establishment is: " + d.name + "<br> Price: " + d.price + "<br> Rating: " + d.rating + "<br> Review Counts:" + d["review_count"])
                     .style("left", (event.pageX + 10) + "px") // It is important to put the +90: other wise the tooltip is exactly where the point is an it creates a weird effect
                     .style("top", (event.pageY - 45) + "px")
             }
-            const mouseleave = function () {
+            const mouseleave = function() {
                 tooltip.transition()
                     .duration(200)
                     .style("opacity", 0)
@@ -123,10 +123,12 @@ let barHours;
             // Sets up filter check boxs
             const rating_choices = new Set();
             const price_choices = new Set();
+
             function updateRatingChoices({ checked, value }) {
                 if (checked) rating_choices.add(value);
                 else rating_choices.delete(value);
             }
+
             function updatePriceChoices({ checked, value }) {
                 if (checked) price_choices.add(value);
                 else price_choices.delete(value);
@@ -199,8 +201,8 @@ let barHours;
 
             // Function that creates the time graph for the selected bar
             function createTimeGraph() {
-                const tagIdTime = "#vis-timechart";
-                // Delete old time chart and replace with new
+                const tagIdTime = "#vis-timechart"
+                    // Delete old time chart and replace with new
                 d3.select(tagIdTime).selectAll("svg").remove();
 
                 svgTime = d3.select(tagIdTime)
@@ -210,10 +212,15 @@ let barHours;
                     .append("g")
                     .attr('transform', 'translate(' + margin.left + ', ' + margin.top + ')');
 
-                const convertToValidTimeString = (input) => {
+                const convertToValidTimeString = (input, overnight = "False") => {
                     let toReturn;
-                    toReturn = input.substring(0, 2);
-                    return toReturn + ':' + input.substring(2, 4) + ':00';
+                    toReturn = input.substring(0, 2) + ':' + input.substring(2, 4) + ':00';
+
+                    if ("True" === overnight) {
+                        toReturn = "23:59:00"
+                    }
+
+                    return toReturn
                 };
 
                 // creates date object out of formatted time
@@ -222,48 +229,50 @@ let barHours;
                 // the actual date is irrelivent, only intiallized because d3 works better with date()
                 // obects, will only display times and the day string
                 barHours = [{
-                    day: 'Mon',
-                    open: dataFormatter(convertToValidTimeString(currentlyUsing.mon_start)),
-                    close: dataFormatter(convertToValidTimeString(currentlyUsing.mon_end))
-                },
-                {
-                    day: 'Tues',
-                    open: dataFormatter(convertToValidTimeString(currentlyUsing.tues_start)),
-                    close: dataFormatter(convertToValidTimeString(currentlyUsing.tues_end))
-                },
-                {
-                    day: 'Wed',
-                    open: dataFormatter(convertToValidTimeString(currentlyUsing.wed_start)),
-                    close: dataFormatter(convertToValidTimeString(currentlyUsing.wed_end))
-                },
-                {
-                    day: 'Thurs',
-                    open: dataFormatter(convertToValidTimeString(currentlyUsing.thurs_start)),
-                    close: dataFormatter(convertToValidTimeString(currentlyUsing.thurs_end))
-                },
-                {
-                    day: 'Fri',
-                    open: dataFormatter(convertToValidTimeString(currentlyUsing.fri_start)),
-                    close: dataFormatter(convertToValidTimeString(currentlyUsing.fri_end))
-                },
-                {
-                    day: 'Sat',
-                    open: dataFormatter(convertToValidTimeString(currentlyUsing.sat_start)),
-                    close: dataFormatter(convertToValidTimeString(currentlyUsing.sat_end))
-                },
-                {
-                    day: 'Sun',
-                    open: dataFormatter(convertToValidTimeString(currentlyUsing.sun_start)),
-                    close: dataFormatter(convertToValidTimeString(currentlyUsing.sun_end))
-                }
+                        day: 'Mon',
+                        open: dataFormatter(convertToValidTimeString(currentlyUsing.mon_start)),
+                        close: dataFormatter(convertToValidTimeString(currentlyUsing.mon_end, currentlyUsing.mon_overnight))
+                    },
+                    {
+                        day: 'Tues',
+                        open: dataFormatter(convertToValidTimeString(currentlyUsing.tues_start)),
+                        close: dataFormatter(convertToValidTimeString(currentlyUsing.tues_end, currentlyUsing.tues_overnight))
+                    },
+                    {
+                        day: 'Wed',
+                        open: dataFormatter(convertToValidTimeString(currentlyUsing.wed_start)),
+                        close: dataFormatter(convertToValidTimeString(currentlyUsing.wed_end, currentlyUsing.wed_overnight))
+                    },
+                    {
+                        day: 'Thurs',
+                        open: dataFormatter(convertToValidTimeString(currentlyUsing.thurs_start)),
+                        close: dataFormatter(convertToValidTimeString(currentlyUsing.thurs_end, currentlyUsing.thurs_overnight))
+                    },
+                    {
+                        day: 'Fri',
+                        open: dataFormatter(convertToValidTimeString(currentlyUsing.fri_start)),
+                        close: dataFormatter(convertToValidTimeString(currentlyUsing.fri_end, currentlyUsing.fri_overnight))
+                    },
+                    {
+                        day: 'Sat',
+                        open: dataFormatter(convertToValidTimeString(currentlyUsing.sat_start)),
+                        close: dataFormatter(convertToValidTimeString(currentlyUsing.sat_end, currentlyUsing.sat_overnight))
+                    },
+                    {
+                        day: 'Sun',
+                        open: dataFormatter(convertToValidTimeString(currentlyUsing.sun_start)),
+                        close: dataFormatter(convertToValidTimeString(currentlyUsing.sun_end, currentlyUsing.sun_overnight))
+                    }
                 ];
+
+                console.log(barHours)
 
                 // set up date range axis
                 // delete if still unecessary after next pm
                 let firstDay = d3.timeDay.floor(new Date(barHours[0].open));
                 let lastDay = d3.timeDay.ceil(new Date(barHours[barHours.length - 1].close));
-                let dateRange = [d3.min(barHours, function (d) { return d3.timeDay.floor(new Date(d.open)) }),
-                d3.max(barHours, function (d) { return d3.timeDay.ceil(new Date(d.close)) })
+                let dateRange = [d3.min(barHours, function(d) { return d3.timeDay.floor(new Date(d.open)) }),
+                    d3.max(barHours, function(d) { return d3.timeDay.ceil(new Date(d.close)) })
                 ];
 
                 let xScale = d3.scaleTime()
@@ -277,12 +286,12 @@ let barHours;
 
                 // use days for y axis rather than dates
                 let yScaleDays = d3.scaleBand()
-                    .domain(barHours.map(function (d) { return d.day }))
+                    .domain(barHours.map(function(d) { return d.day }))
                     .range([0, heightTime])
 
                 let fullScale = d3.scaleTime()
                     .domain([d3.timeHour(new Date(2014, 0, 1, 0, 0, 0)),
-                    d3.timeHour(new Date(2014, 0, 2, 0, 0, 0)),
+                        d3.timeHour(new Date(2014, 0, 2, 0, 0, 0)),
                     ])
                     .range([0, widthTime]);
 
@@ -298,6 +307,28 @@ let barHours;
                 svgTime.append("g")
                     .call(d3.axisLeft(yScaleDays))
 
+                // creates the tooltip that shows up when a bar is hovered
+                const tooltip = d3.select("#vis-timechart")
+                    .append("div")
+                    .attr("class", "tooltip");
+
+                // event handler for when the bar is moused over, shows the tooltip
+                const mouseover = function(event, d) {
+                    tooltip.html("Day: " + d.day + "<br> Open: " + d.open.toLocaleTimeString() +
+                            "<br> Close: " + d.close.toLocaleTimeString() + "<br>")
+                        .style("opacity", 1);
+                }
+
+                // event handler for the when the mouse is moving along the bar, tooltip moves with it
+                const mousemove = function(event, d) {
+                    tooltip.style("left", (event.pageX) + "px").style("top", event.pageY + "px");
+                }
+
+                // event handler for when the mouse is done hovering over a bar
+                const mouseleave = function(event, d) {
+                    tooltip.style("opacity", 0);
+                }
+
                 // create actual bar graphs
                 svgTime.append("g")
                     .selectAll("rect")
@@ -305,21 +336,24 @@ let barHours;
                     .enter()
                     .append("rect")
                     .attr("class", "time-bar")
-                    .attr("x", function (d) {
+                    .attr("x", function(d) {
                         let h = hourFormatter(new Date(d.open)).split(":"), // changes datum from string, to proper Date Object, back to hour string and splits
                             xh = parseFloat(h[0]) + parseFloat(h[1] / 60); // time (hour and minute) as decimal
                         return xScale(xh);;
                     })
                     //.attr("y", function (d) { return yScale(d3.timeDay.floor(new Date(d.open))) })
-                    .attr("y", function (d) { return yScaleDays(d.day) })
-                    .attr("width", function (d) {
+                    .attr("y", function(d) { return yScaleDays(d.day) })
+                    .attr("width", function(d) {
                         let hstart = new Date(d.open),
                             hstop = new Date(d.close);
                         return xScale((hstop - hstart) / 3600000); // divide to convert to hours
                     })
                     .attr("height", 30)
                     .attr("rx", 10)
-                    .attr("ry", 10);
+                    .attr("ry", 10)
+                    .on("mouseover", mouseover)
+                    .on("mousemove", mousemove)
+                    .on("mouseleave", mouseleave);
 
                 // Delete previous data and add bar name
                 d3.select("#bar-name").select("h1").remove();
@@ -333,7 +367,7 @@ let barHours;
             // Function that creates the radar graph for the selected bar
             function createRadarGraph() {
                 const tagIdRadar = "#vis-radar"
-                // Delete old radar graph and replace with new
+                    // Delete old radar graph and replace with new
                 d3.select(tagIdRadar).selectAll("svg").remove()
 
                 svgRadar = d3.select(tagIdRadar)
@@ -633,7 +667,7 @@ let barHours;
                 if (brushEvent !== null && brushEvent.selection !== null) {
                     // brushed data points
                     let brushed = []
-                    // Find coordinates of brushed region 
+                        // Find coordinates of brushed region 
                     const brushCoords = brushEvent.selection;
                     const x0 = brushCoords[0][0];
                     const x1 = brushCoords[1][0];
@@ -676,7 +710,7 @@ let barHours;
                     .on("mouseover", mouseover)
                     .on("mousemove", mousemove)
                     .on("mouseleave", mouseleave)
-                    .on("click", function (event, d) {
+                    .on("click", function(event, d) {
                         // Redirect to bar's yelp page
                         // window.location = d.url;
                         // Pass data to other charts
@@ -747,12 +781,12 @@ let barHours;
                     .on("mouseleave", mouseleave)
                 circlesRadial.exit()
                     .remove()
-                // svgRadial
-                //     .append('circle')
-                //     .attr('cx', center.x)
-                //     .attr('cy', center.y)
-                //     .attr('r', 5)
-                //     .style('fill', 'orange');
+                    // svgRadial
+                    //     .append('circle')
+                    //     .attr('cx', center.x)
+                    //     .attr('cy', center.y)
+                    //     .attr('r', 5)
+                    //     .style('fill', 'orange');
             }
 
             updateAll();
@@ -771,8 +805,8 @@ let barHours;
 //     };
 //     const dist = distance(currentlyUsingLocation, barLocation) / maxDist;
 //     const bear = bearing(currentlyUsingLocation, barLocation);
-    // const x = dist * center.x * Math.cos(bear) + center.x;
-    // const y = dist * center.y * Math.sin(bear) + center.y;
+// const x = dist * center.x * Math.cos(bear) + center.x;
+// const y = dist * center.y * Math.sin(bear) + center.y;
 //     path.lineTo(x, y);
 //     svgRadial
 //         .append('circle')
@@ -790,4 +824,3 @@ let barHours;
 //     .attr('stroke', 'black')
 //     .attr('opacity', 0.3)
 //     .attr('d', path);
-
