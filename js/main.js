@@ -756,10 +756,9 @@ let barHours;
                         long: longitude,
                     }
                     const dist = distance(currentLocation, barLocation) / maxDist;
-                    const bear = bearing(currentLocation, barLocation);
-                    const x = dist * (widthRadial / 2 - 4) * Math.cos(bear) + center.x;
-                    const y = dist * (heightRadial / 2 - 4) * Math.sin(bear) + center.y;
-                    console.log(x, y, bear);
+                    const bear = bearing(currentLocation, barLocation) + 270;
+                    const x = dist * (widthRadial / 2 - 4) * Math.cos(bear * Math.PI / 180) + center.x;
+                    const y = dist * (heightRadial / 2 - 4) * Math.sin(bear * Math.PI / 180) + center.y;
                     radialData.push({
                         ...d,
                         x,
@@ -775,7 +774,7 @@ let barHours;
                     .attr("cy", d => d["y"])
                     .attr("stroke", d => color[d['price']] || 'black')
                     .attr('r', 4)
-                    .style("opacity", 0.5)
+                    .style("opacity", 0.2)
                     .on("mouseover", mouseover)
                     .on("mousemove", mousemove)
                     .on("mouseleave", mouseleave)
