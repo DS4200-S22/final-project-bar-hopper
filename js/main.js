@@ -572,7 +572,7 @@ let barHours;
                 if (price_choices.size > 0) newData = data.filter((d, i) => price_choices.has(d["price"]));
 
                 if (rating_choices.size > 0) {
-                    newData = newData.length > 0 ? newData.filter((d, i) => rating_choices.has(d["rating"])) : mergedData.filter((d, i) => rating_choices.has(d["rating"]))
+                    newData = price_choices.size > 0 ? newData.filter((d, i) => rating_choices.has(d["rating"])) : data.filter((d, i) => rating_choices.has(d["rating"]))
                 }
                 return price_choices.size + rating_choices.size > 0 ? newData : data;
             }
