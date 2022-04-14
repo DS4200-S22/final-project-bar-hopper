@@ -581,11 +581,11 @@ let barHours;
             // Redraw Map, Scatter, Radial
             function updateAll() {
                 // Filters the data
-                const newData = filterData(mergedData);
+                filteredData = filterData(mergedData);
 
                 // Paints the map
                 circlesMap = svgMap.selectAll("circle")
-                    .data(newData, d => d["id"]);
+                    .data(filteredData, d => d["id"]);
                 circlesMap.enter()
                     .append("circle")
                     .attr("class", d => "p" + d.price.length + " r" + d.rating * 10) // price and rating classes
@@ -606,7 +606,6 @@ let barHours;
                 circlesMap.exit()
                     .remove();
 
-                filteredData = newData;
                 paintScatterPlot();
                 paintRadialPlot();
             }
