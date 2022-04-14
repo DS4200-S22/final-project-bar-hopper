@@ -30,6 +30,36 @@ function isBrushed(x0, x1, y0, y1, cx, cy) {
     return x0 <= cx && cx <= x1 && y0 <= cy && cy <= y1; // This return TRUE or FALSE depending on if the points is in the selected area
 }
 
+const permissionElement = document.getElementById("permission-message");
+const latitudeElement = document.getElementById("vis-latitude-input");
+const longitudeElement = document.getElementById("vis-longitude-input");
+const locationElemnt = document.getElementById("vis-radial-locate-me");
+
+function showLatitude(latitude) {
+    latitudeElement.value = "latitude: " + latitude;
+}
+
+function showLongitude(longitude) {
+    longitudeElement.value = "longitude :" + longitude;
+}
+
+function showError(error) {
+    switch (error.code) {
+        case error.PERMISSION_DENIED:
+            permissionElement.innerHTML = "User denied the request for Geolocation.";
+            break;
+        case error.POSITION_UNAVAILABLE:
+            permissionElement.innerHTML = "Location information is unavailable.";
+            break;
+        case error.TIMEOUT:
+            permissionElement.innerHTML = "The request to get user location timed out.";
+            break;
+        case error.UNKNOWN_ERROR:
+            permissionElement.innerHTML = "An unknown error occurred.";
+            break;
+    }
+}
+
 // High level variables to reference in linking visualizations
 // Currently selected bar
 let currentlyUsing;
@@ -39,10 +69,6 @@ let barHours;
 (function () {
     d3.json("https://raw.githubusercontent.com/DS4200-S22/final-project-bar-hopper/main/data/boston.geojson").then(function (mapData) {
         d3.csv("https://raw.githubusercontent.com/DS4200-S22/final-project-bar-hopper/main/data/final_merged_data.csv").then(function (mergedData) {
-            const permissionElement = document.getElementById("permission-message");
-            const latitudeElement = document.getElementById("vis-latitude-input");
-            const longitudeElement = document.getElementById("vis-longitude-input");
-            const locationElemnt = document.getElementById("vis-radial-locate-me");
             currentlyUsing = mergedData[0];
 
             // Map Dimension and Projection
@@ -159,16 +185,18 @@ let barHours;
 
             // Svg Radial
             let svgRadial; // Sets the viewbox of the svg
-            let pathRadial;
             const center = {
                 x: widthRadial / 2,
                 y: heightRadial / 2,
             };
-            // Default BU location
-            const currentLocation = {
+            // Default NEU Snell location
+            let currentLocation = {
                 lat: 42.3505,
                 long: -71.1054,
             };
+
+            // Display data for radial and scatter plots
+            let filteredData = mergedData;
 
             // Function that creates the time graph for the selected bar
             function createTimeGraph() {
@@ -619,7 +647,6 @@ let barHours;
                     .attr("width", widthRadial) // Sets the width of the svg
                     .attr("height", heightRadial) // Sets the height of the svg
                     .attr("viewBox", [0, 0, widthRadial, heightRadial]); // Sets the viewbox of the svg
-                pathRadial = d3.path();
             }
 
             // Sets up brush functions
@@ -645,9 +672,9 @@ let barHours;
                             }
                             return false;
                         })
-                    brushed = brushed.length > 0 ? brushed : mergedData;
-                    paintScatterPlot(brushed);
-                    paintRadialPlot(brushed);
+                    filteredData = brushed.length > 0 ? brushed : mergedData;
+                    paintScatterPlot();
+                    paintRadialPlot();
                 }
             }
 
@@ -685,14 +712,15 @@ let barHours;
                 circlesMap.exit()
                     .remove();
 
-                paintScatterPlot(newData);
-                paintRadialPlot(newData);
+                filteredData = newData;
+                paintScatterPlot();
+                paintRadialPlot();
             }
 
             // Paints the scatter plot
-            function paintScatterPlot(data) {
+            function paintScatterPlot() {
                 circlesScatter = gDot.selectAll("path")
-                    .data(data, d => d["id"]);;
+                    .data(filteredData, d => d["id"]);;
                 circlesScatter.enter()
                     .append("path")
                     .attr("id", d => d.id)
@@ -707,18 +735,18 @@ let barHours;
             }
 
             // Paints the radial plot
-            function paintRadialPlot(data) {
+            function paintRadialPlot() {
                 mousemove = function (event, d) {
                     tooltip.html("This establishment is: " + d.name + "<br> Distance(km): " + (Math.round(d.dist * 100) / 100) + "<br> Bearing: " + (Math.round((d.bearing - 270) * 100) / 100))
                         .style("left", (event.pageX + 10) + "px")
                         .style("top", (event.pageY - 45) + "px")
                 }
                 const radialData = [];
-                const maxDist = d3.max(data, d => {
+                const maxDist = d3.max(filteredData, d => {
                     const { latitude, longitude } = d;
                     return distance(currentLocation, { lat: latitude, long: longitude });
                 });
-                data.forEach(d => {
+                filteredData.forEach(d => {
                     const { latitude, longitude } = d;
                     const barLocation = {
                         lat: latitude,
@@ -736,7 +764,9 @@ let barHours;
                         bearing: bear,
                     });
                 });
-                // Paint the circles
+                // Remove and draw the circles
+                svgRadial.selectAll("circle")
+                    .remove();
                 circlesRadial = svgRadial.selectAll("circle")
                     .data(radialData, d => d["id"]);
                 circlesRadial.enter()
@@ -744,14 +774,11 @@ let barHours;
                     .attr("id", d => d["id"])
                     .attr("cx", d => d["x"])
                     .attr("cy", d => d["y"])
-                    .attr("stroke", d => color[d['price']] || 'black')
+                    .attr("fill", d => color[d['price']] || 'black')
                     .attr('r', 4)
-                    .style("opacity", 0.5)
                     .on("mouseover", mouseover)
                     .on("mousemove", mousemove)
                     .on("mouseleave", mouseleave)
-                circlesRadial.exit()
-                    .remove()
                 // Remove and Draw the center rect 
                 svgRadial.selectAll("rect")
                     .remove();
@@ -761,42 +788,53 @@ let barHours;
                     .attr("width", 10)
                     .attr("height", 10)
                     .attr("class", "location-center")
-                    .style("fill", "orange");
+                    .style("fill", "black");
             }
 
+            // TODO set up button
             function getLocation() {
                 if (navigator.geolocation) {
-                    navigator.geolocation.getCurrentPosition(showPosition, showError);
+                    navigator.geolocation.getCurrentPosition(getLocationCallback, showError);
                 } else {
                     permissionElement.innerHTML = "Geolocation is not supported by this browser.";
                 }
             }
 
-            function showPosition(position) {
-                const coords = position.coords;
+            function getLocationCallback(position) {
+                const { coords } = position;
                 const { latitude, longitude } = coords;
-                latitudeElement.value = latitude;
-                longitudeElement.value = longitude;
-            }
+                updateLatitude(latitude);
+                updateLongitude(longitude);
+                showLatitude(latitude);
+                showLongitude(longitude);
+                paintRadialPlot();
+            } 
 
-            function showError(error) {
-                switch (error.code) {
-                    case error.PERMISSION_DENIED:
-                        permissionElement.innerHTML = "User denied the request for Geolocation.";
-                        break;
-                    case error.POSITION_UNAVAILABLE:
-                        permissionElement.innerHTML = "Location information is unavailable.";
-                        break;
-                    case error.TIMEOUT:
-                        permissionElement.innerHTML = "The request to get user location timed out.";
-                        break;
-                    case error.UNKNOWN_ERROR:
-                        permissionElement.innerHTML = "An unknown error occurred.";
-                        break;
+            function updateLatitude(latitude) {
+                currentLocation = {
+                    ...currentLocation,
+                    lat: parseFloat(latitude),
                 }
+                showLatitude(latitude);
+                paintRadialPlot();
+            }
+            
+            function updateLongitude(longitude) {
+                currentLocation = {
+                    ...currentLocation,
+                    long: parseFloat(longitude),
+                }
+                showLongitude(longitude);
+                paintRadialPlot();
             }
 
-            getLocation();
+            // Sets up locations inputs
+            {
+                locationElemnt.addEventListener("click", getLocation);
+                latitudeElement.addEventListener("change", ({target}) => updateLatitude(target.value));
+                longitudeElement.addEventListener("change", ({target}) => updateLongitude(target.value));
+            }
+
             updateAll();
         });
     });

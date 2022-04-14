@@ -120,7 +120,7 @@ h3 {
 }
 
 .location-center {
-    stroke: tomato;
+    stroke: gray;
     opacity: 1 !important;
     stroke-width: 4px;
 }
