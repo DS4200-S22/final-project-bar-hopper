@@ -152,10 +152,6 @@ let barHours;
             const hourFormatter = d3.timeFormat("%X");
             const yAxisFormatter = d3.timeFormat("%m/%d");
 
-            // Radar Dimension
-            const widthRadar = 300;
-            const heightRadar = 300;
-
             // Chart settings
             let presets = {
                 zoom: 20,
@@ -362,123 +358,8 @@ let barHours;
                     .text(currentlyUsing.name);
             };
 
-            // Function that creates the radar graph for the selected bar
-            function createRadarGraph() {
-                const tagIdRadar = "#vis-radar";
-                // Delete old radar graph and replace with new
-                d3.select(tagIdRadar).selectAll("svg").remove();
-
-                svgRadar = d3.select(tagIdRadar)
-                    .append("svg")
-                    .attr("width", widthRadar)
-                    .attr("height", heightRadar);
-
-                gRadar = svgRadar.append("g");
-
-
-                // Parse the current selected bar's location data
-                let user = {
-                    lat: currentlyUsing.latitude,
-                    long: currentlyUsing.longitude
-                };
-
-                let albersProjection = d3.geoAlbers()
-                    .scale(190000 * presets.zoom)
-                    .rotate([71.057, 42.313 - 42.3522])
-                    .center([-71.0678 + 71.057, 42.313])
-                    .translate([widthRadar / 2, heightRadar / 2]);
-
-                // Draw the map
-                gRadar.selectAll("path")
-                    .data(mapData.features)
-                    .join("path")
-                    .attr("fill", "#b8b8b8")
-                    .attr("d", d3.geoPath()
-                        .projection(albersProjection)
-                    )
-                    .style("stroke", "black")
-                    .style("opacity", .3);
-
-                // Add circles:
-                svgRadar
-                    .selectAll("myCircles")
-                    .data(mergedData)
-                    .join("circle")
-                    .attr("id", 'bar')
-                    .attr("class", d => "p" + d.price.length) // price class
-                    .attr("cx", d => albersProjection([d.longitude, d.latitude])[0])
-                    .attr("cy", d => albersProjection([d.longitude, d.latitude])[1])
-                    .attr("r", 6)
-                    .style("fill", "#0000ff")
-                    .style("opacity", 1)
-                    .attr("stroke", "#000000")
-                    .attr("stroke-width", 2)
-                    .attr("fill-opacity", .4)
-                    .on("mouseover", mouseover)
-                    .on("mousemove", mousemove)
-                    .on("mouseleave", mouseleave);
-
-
-                let zoom = d3.zoom()
-                    .scaleExtent([0.05, 16])
-                    .on('zoom', updateChart);
-
-                svgRadar.call(zoom);
-
-                // A function that updates the chart when the user zoom and thus new boundaries are available
-                function updateChart(event) {
-
-                    gRadar.selectAll('path')
-                        .attr('transform', event.transform);
-
-                    svgRadar.selectAll("#bar")
-                        .attr('transform', event.transform)
-                        .attr('r', 6 / event.transform.k) // Scale down zoom of circles
-                        .attr('stroke-width', 2 / event.transform.k); // Scale down zoom of circles
-
-                    svgRadar.selectAll('#user')
-                        .attr('transform', event.transform)
-                        .attr('r', presets.userSize / event.transform.k) // Scale down zoom of circles
-                        .attr('stroke-width', 2 / event.transform.k); // Scale down zoom of circles
-
-                    svgRadar.selectAll('#range')
-                        .attr('transform', event.transform)
-                        // .attr('r', presets.rangeSize / event.transform.k) // Scale down zoom of circles
-                        .attr('stroke-width', 2 / event.transform.k); // Scale down zoom of circles
-                }
-
-                // add markers
-                svgRadar.append("circle")
-                    .attr("id", "user")
-                    // .attr("cx", albersProjection([user.long, user.lat]))
-                    // .attr("cy", albersProjection([user.long, user.lat]))
-                    .attr("cx", albersProjection([user.long, user.lat])[0])
-                    .attr("cy", albersProjection([user.long, user.lat])[1])
-                    .attr("r", presets.userSize)
-                    .style("fill", "red")
-                    .style("opacity", 1)
-                    .attr("stroke", "#8c0315")
-                    .attr("stroke-width", 2)
-                    .attr("fill-opacity", .4);
-
-                // add markers
-                svgRadar.append("circle")
-                    .attr("id", "range")
-                    // .attr("cx", albersProjection([user.long, user.lat]))
-                    // .attr("cy", albersProjection([user.long, user.lat]))
-                    .attr("cx", albersProjection([user.long, user.lat])[0])
-                    .attr("cy", albersProjection([user.long, user.lat])[1])
-                    .attr("r", 4)
-                    .style("fill", "lightgreen")
-                    .style("opacity", 1)
-                    .attr("stroke", "#0b9e35")
-                    .attr("stroke-width", 2)
-                    .attr("fill-opacity", .4);
-            }
-
             // Create graphs on initial load for the default first record
             createTimeGraph();
-            createRadarGraph();
 
             // Sets Up Main map
             {
@@ -706,7 +587,6 @@ let barHours;
                         // Pass data to other charts
                         currentlyUsing = d;
                         createTimeGraph();
-                        createRadarGraph();
                     });
                 circlesMap.exit()
                     .remove();
