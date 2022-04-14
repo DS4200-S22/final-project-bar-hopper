@@ -55,7 +55,7 @@ function showClosestBar({ name, dist }) {
 }
 
 function showDistance(dist) {
-    labelElement.innerHTML = `Distance range (km): ${dist}`;
+    labelElement.innerHTML = `Distance range (m): ${dist}`;
 }
 
 function showError(error) {
