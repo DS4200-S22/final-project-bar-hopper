@@ -1,3 +1,4 @@
+// Utility function to calculate distance between two points
 function distance(location1, location2) {
     const R = 6371e3;
     const lat1 = location1.lat * Math.PI / 180; // lat1, lat2 in radians
@@ -12,6 +13,7 @@ function distance(location1, location2) {
     return R * c;
 }
 
+// Utility function to calculate angle (in degrees) between two points
 function bearing(location1, location2) {
     const lat1 = location1.lat * Math.PI / 180; // lat1, lat2, long1, long2 in radians
     const lat2 = location2.lat * Math.PI / 180;
@@ -25,7 +27,7 @@ function bearing(location1, location2) {
     return brng;
 }
 
-//Finds dots within the brushed region
+// Finds dots within the brushed region
 function isBrushed(x0, x1, y0, y1, cx, cy) {
     return x0 <= cx && cx <= x1 && y0 <= cy && cy <= y1; // This return TRUE or FALSE depending on if the points is in the selected area
 }
@@ -61,21 +63,19 @@ function showError(error) {
 }
 
 // High level variables to reference in linking visualizations
-// Currently selected bar
 let currentlyUsing;
-// Bar hours of operation data
 let barHours;
 
-(function () {
-    d3.json("https://raw.githubusercontent.com/DS4200-S22/final-project-bar-hopper/main/data/boston.geojson").then(function (mapData) {
-        d3.csv("https://raw.githubusercontent.com/DS4200-S22/final-project-bar-hopper/main/data/final_merged_data.csv").then(function (mergedData) {
+(function() {
+    d3.json("https://raw.githubusercontent.com/DS4200-S22/final-project-bar-hopper/main/data/boston.geojson").then(function(mapData) {
+        d3.csv("https://raw.githubusercontent.com/DS4200-S22/final-project-bar-hopper/main/data/final_merged_data.csv").then(function(mergedData) {
             currentlyUsing = mergedData[0];
 
             // Map Dimension and Projection
             const widthMap = 500;
             const heightMap = 500;
             const projection_map = d3.geoMercator()
-                .fitSize([widthMap, heightMap], mapData)
+                .fitSize([widthMap, heightMap], mapData);
 
             // Scatter Dimension and Margin
             const widthScatter = 400;
@@ -85,7 +85,7 @@ let barHours;
             const innerHeightScatter = heightScatter - margin_scatter.top - margin_scatter.bottom;
             const k = heightScatter / widthScatter;
 
-            // Sets up tool tip for the visulzation
+            // Sets up tool tip for the visualization
             const tooltip = d3.select("#tooltip")
                 .append("div")
                 .style("opacity", 0)
@@ -93,19 +93,20 @@ let barHours;
                 .style("border", "solid")
                 .style("border-width", "1px")
                 .style("border-radius", "5px")
-                .style("padding", "10px")
-            const mouseover = function () {
-                tooltip.style("opacity", 1)
+                .style("padding", "10px");
+
+            const mouseover = function() {
+                tooltip.style("opacity", 1);
             }
-            let mousemove = function (event, d) {
+            let mousemove = function(event, d) {
                 tooltip.html("This establishment is: " + d.name + "<br> Price: " + d.price + "<br> Rating: " + d.rating + "<br> Review Counts:" + d["review_count"])
                     .style("left", (event.pageX + 10) + "px") // It is important to put the +90: other wise the tooltip is exactly where the point is an it creates a weird effect
-                    .style("top", (event.pageY - 45) + "px")
+                    .style("top", (event.pageY - 45) + "px");
             }
-            const mouseleave = function () {
+            const mouseleave = function() {
                 tooltip.transition()
                     .duration(200)
-                    .style("opacity", 0)
+                    .style("opacity", 0);
             }
 
             // Sets up channels
@@ -114,9 +115,9 @@ let barHours;
                 "$$": "#1c03fc",
                 "$$$": "#6eeb34",
                 "$$$$": "#34ebdc",
-            }
+            };
 
-            // Sets up filter check boxs
+            // Sets up filter check boxes
             const rating_choices = new Set();
             const price_choices = new Set();
 
@@ -129,10 +130,12 @@ let barHours;
                 if (checked) price_choices.add(value);
                 else price_choices.delete(value);
             }
+
             d3.selectAll(".price").on("change", ({ target }) => {
                 updatePriceChoices(target);
                 updateAll();
             });
+
             d3.selectAll(".rating").on("change", ({ target }) => {
                 updateRatingChoices(target);
                 updateAll();
@@ -143,8 +146,7 @@ let barHours;
             const heightTime = 250;
             const margin = { left: 25, right: 25, bottom: 25, top: 25 };
 
-            // set up d3 time formatting
-            // delete if still unecessary after next pm
+            // Set up d3 time formatting
             const dayFormatter = d3.timeFormat("%w");
             const weekFormatter = d3.timeFormat("%U");
             const hourFormatter = d3.timeFormat("%X");
@@ -159,7 +161,7 @@ let barHours;
                 zoom: 20,
                 userSize: 10,
                 rangeSize: 100
-            }
+            };
 
             // Radial Dimension
             const widthRadial = 300;
@@ -200,7 +202,7 @@ let barHours;
 
             // Function that creates the time graph for the selected bar
             function createTimeGraph() {
-                const tagIdTime = "#vis-timechart"
+                const tagIdTime = "#vis-timechart";
                 // Delete old time chart and replace with new
                 d3.select(tagIdTime).selectAll("svg").remove();
 
@@ -216,133 +218,130 @@ let barHours;
                     toReturn = input.substring(0, 2) + ':' + input.substring(2, 4) + ':00';
 
                     if ("True" === overnight) {
-                        toReturn = "23:59:00"
+                        toReturn = "23:59:00";
                     }
 
-                    return toReturn
+                    return toReturn;
                 };
 
-                // creates date object out of formatted time
+                // Creates date object out of formatted time
                 const dataFormatter = d3.timeParse('%H:%M:%S');
 
-                // the actual date is irrelivent, only intiallized because d3 works better with date()
-                // obects, will only display times and the day string
+                // The actual date is irrelevant, only intiallized because d3 works better with date()
+                // Obects, will only display times and the day string
                 barHours = [{
-                    day: 'Mon',
-                    open: dataFormatter(convertToValidTimeString(currentlyUsing.mon_start)),
-                    close: dataFormatter(convertToValidTimeString(currentlyUsing.mon_end, currentlyUsing.mon_overnight))
-                },
-                {
-                    day: 'Tues',
-                    open: dataFormatter(convertToValidTimeString(currentlyUsing.tues_start)),
-                    close: dataFormatter(convertToValidTimeString(currentlyUsing.tues_end, currentlyUsing.tues_overnight))
-                },
-                {
-                    day: 'Wed',
-                    open: dataFormatter(convertToValidTimeString(currentlyUsing.wed_start)),
-                    close: dataFormatter(convertToValidTimeString(currentlyUsing.wed_end, currentlyUsing.wed_overnight))
-                },
-                {
-                    day: 'Thurs',
-                    open: dataFormatter(convertToValidTimeString(currentlyUsing.thurs_start)),
-                    close: dataFormatter(convertToValidTimeString(currentlyUsing.thurs_end, currentlyUsing.thurs_overnight))
-                },
-                {
-                    day: 'Fri',
-                    open: dataFormatter(convertToValidTimeString(currentlyUsing.fri_start)),
-                    close: dataFormatter(convertToValidTimeString(currentlyUsing.fri_end, currentlyUsing.fri_overnight))
-                },
-                {
-                    day: 'Sat',
-                    open: dataFormatter(convertToValidTimeString(currentlyUsing.sat_start)),
-                    close: dataFormatter(convertToValidTimeString(currentlyUsing.sat_end, currentlyUsing.sat_overnight))
-                },
-                {
-                    day: 'Sun',
-                    open: dataFormatter(convertToValidTimeString(currentlyUsing.sun_start)),
-                    close: dataFormatter(convertToValidTimeString(currentlyUsing.sun_end, currentlyUsing.sun_overnight))
-                }
+                        day: 'Mon',
+                        open: dataFormatter(convertToValidTimeString(currentlyUsing.mon_start)),
+                        close: dataFormatter(convertToValidTimeString(currentlyUsing.mon_end, currentlyUsing.mon_overnight))
+                    },
+                    {
+                        day: 'Tues',
+                        open: dataFormatter(convertToValidTimeString(currentlyUsing.tues_start)),
+                        close: dataFormatter(convertToValidTimeString(currentlyUsing.tues_end, currentlyUsing.tues_overnight))
+                    },
+                    {
+                        day: 'Wed',
+                        open: dataFormatter(convertToValidTimeString(currentlyUsing.wed_start)),
+                        close: dataFormatter(convertToValidTimeString(currentlyUsing.wed_end, currentlyUsing.wed_overnight))
+                    },
+                    {
+                        day: 'Thurs',
+                        open: dataFormatter(convertToValidTimeString(currentlyUsing.thurs_start)),
+                        close: dataFormatter(convertToValidTimeString(currentlyUsing.thurs_end, currentlyUsing.thurs_overnight))
+                    },
+                    {
+                        day: 'Fri',
+                        open: dataFormatter(convertToValidTimeString(currentlyUsing.fri_start)),
+                        close: dataFormatter(convertToValidTimeString(currentlyUsing.fri_end, currentlyUsing.fri_overnight))
+                    },
+                    {
+                        day: 'Sat',
+                        open: dataFormatter(convertToValidTimeString(currentlyUsing.sat_start)),
+                        close: dataFormatter(convertToValidTimeString(currentlyUsing.sat_end, currentlyUsing.sat_overnight))
+                    },
+                    {
+                        day: 'Sun',
+                        open: dataFormatter(convertToValidTimeString(currentlyUsing.sun_start)),
+                        close: dataFormatter(convertToValidTimeString(currentlyUsing.sun_end, currentlyUsing.sun_overnight))
+                    }
                 ];
 
-                console.log(barHours)
+                console.log(barHours);
 
-                // set up date range axis
-                // delete if still unecessary after next pm
+                // Set up date range axis
                 let firstDay = d3.timeDay.floor(new Date(barHours[0].open));
                 let lastDay = d3.timeDay.ceil(new Date(barHours[barHours.length - 1].close));
-                let dateRange = [d3.min(barHours, function (d) { return d3.timeDay.floor(new Date(d.open)) }),
-                d3.max(barHours, function (d) { return d3.timeDay.ceil(new Date(d.close)) })
+                let dateRange = [d3.min(barHours, function(d) { return d3.timeDay.floor(new Date(d.open)) }),
+                    d3.max(barHours, function(d) { return d3.timeDay.ceil(new Date(d.close)) })
                 ];
 
                 let xScale = d3.scaleTime()
                     .domain([0, 24])
                     .range([0, widthTime]);
 
-                // delete if no longer using after next pm
                 let yScale = d3.scaleTime()
                     .domain(dateRange)
                     .range([0, heightTime]);
 
-                // use days for y axis rather than dates
+                // Use days for y axis
                 let yScaleDays = d3.scaleBand()
-                    .domain(barHours.map(function (d) { return d.day }))
-                    .range([0, heightTime])
+                    .domain(barHours.map(function(d) { return d.day }))
+                    .range([0, heightTime]);
 
                 let fullScale = d3.scaleTime()
                     .domain([d3.timeHour(new Date(2014, 0, 1, 0, 0, 0)),
-                    d3.timeHour(new Date(2014, 0, 2, 0, 0, 0)),
+                        d3.timeHour(new Date(2014, 0, 2, 0, 0, 0)),
                     ])
                     .range([0, widthTime]);
 
-                // x axis
+                // X axis
                 svgTime.append("g")
                     .attr("transform", "translate(0," + heightTime + ")")
                     .call(d3.axisBottom(xScale)
                         .scale(fullScale)
                         .tickFormat(d3.timeFormat("%H:%M")));
 
-                // y axis new
-                // uses days instead of dates
+                // Y axis
                 svgTime.append("g")
-                    .call(d3.axisLeft(yScaleDays))
+                    .call(d3.axisLeft(yScaleDays));
 
-                // creates the tooltip that shows up when a bar is hovered
+                // Creates the tooltip that shows up when a bar is hovered
                 const tooltip = d3.select("#vis-timechart")
                     .append("div")
                     .attr("class", "tooltip");
 
-                // event handler for when the bar is moused over, shows the tooltip
-                const mouseover = function (event, d) {
+                // Event handler for when the bar is moused over, shows the tooltip
+                const mouseover = function(event, d) {
                     tooltip.html("Day: " + d.day + "<br> Open: " + d.open.toLocaleTimeString() +
-                        "<br> Close: " + d.close.toLocaleTimeString() + "<br>")
+                            "<br> Close: " + d.close.toLocaleTimeString() + "<br>")
                         .style("opacity", 1);
                 }
 
-                // event handler for the when the mouse is moving along the bar, tooltip moves with it
-                const mousemove = function (event, d) {
+                // Event handler for the when the mouse is moving along the bar, tooltip moves with it
+                const mousemove = function(event, d) {
                     tooltip.style("left", (event.pageX) + "px").style("top", event.pageY + "px");
                 }
 
-                // event handler for when the mouse is done hovering over a bar
-                const mouseleave = function (event, d) {
+                // Event handler for when the mouse is done hovering over a bar
+                const mouseleave = function(event, d) {
                     tooltip.style("opacity", 0);
                 }
 
-                // create actual bar graphs
+                // Create actual bar graphs
                 svgTime.append("g")
                     .selectAll("rect")
                     .data(barHours)
                     .enter()
                     .append("rect")
                     .attr("class", "time-bar")
-                    .attr("x", function (d) {
+                    .attr("x", function(d) {
                         let h = hourFormatter(new Date(d.open)).split(":"), // changes datum from string, to proper Date Object, back to hour string and splits
                             xh = parseFloat(h[0]) + parseFloat(h[1] / 60); // time (hour and minute) as decimal
-                        return xScale(xh);;
+                        return xScale(xh);
                     })
                     //.attr("y", function (d) { return yScale(d3.timeDay.floor(new Date(d.open))) })
-                    .attr("y", function (d) { return yScaleDays(d.day) })
-                    .attr("width", function (d) {
+                    .attr("y", function(d) { return yScaleDays(d.day) })
+                    .attr("width", function(d) {
                         let hstart = new Date(d.open),
                             hstop = new Date(d.close);
                         return xScale((hstop - hstart) / 3600000); // divide to convert to hours
@@ -365,14 +364,14 @@ let barHours;
 
             // Function that creates the radar graph for the selected bar
             function createRadarGraph() {
-                const tagIdRadar = "#vis-radar"
+                const tagIdRadar = "#vis-radar";
                 // Delete old radar graph and replace with new
-                d3.select(tagIdRadar).selectAll("svg").remove()
+                d3.select(tagIdRadar).selectAll("svg").remove();
 
                 svgRadar = d3.select(tagIdRadar)
                     .append("svg")
                     .attr("width", widthRadar)
-                    .attr("height", heightRadar)
+                    .attr("height", heightRadar);
 
                 gRadar = svgRadar.append("g");
 
@@ -381,7 +380,7 @@ let barHours;
                 let user = {
                     lat: currentlyUsing.latitude,
                     long: currentlyUsing.longitude
-                }
+                };
 
                 let albersProjection = d3.geoAlbers()
                     .scale(190000 * presets.zoom)
@@ -398,7 +397,7 @@ let barHours;
                         .projection(albersProjection)
                     )
                     .style("stroke", "black")
-                    .style("opacity", .3)
+                    .style("opacity", .3);
 
                 // Add circles:
                 svgRadar
@@ -500,7 +499,7 @@ let barHours;
                         .projection(projection_map)
                     )
                     .style("stroke", "black")
-                    .style("opacity", .3)
+                    .style("opacity", .3);
 
                 // Sets up brush
                 long1 = projection_map.invert([0, 0])[0];
@@ -509,10 +508,10 @@ let barHours;
                 lat2 = projection_map.invert([0, heightMap])[1];
                 brushXMap = d3.scaleLinear()
                     .range([0, widthMap])
-                    .domain([long1, long2])
+                    .domain([long1, long2]);
                 brushYMap = d3.scaleLinear()
                     .range([0, heightMap])
-                    .domain([lat1, lat2])
+                    .domain([lat1, lat2]);
                 brushMap = d3.brush()
                     .extent([
                         [0, 0],
@@ -635,7 +634,7 @@ let barHours;
 
                 document.getElementById("vis-scatter-zoom-reset").addEventListener('click', resetZoom);
 
-                svg.call(zoom).call(zoom.transform, d3.zoomIdentity)
+                svg.call(zoom).call(zoom.transform, d3.zoomIdentity);
             }
 
             // Sets up radial graph
@@ -658,7 +657,7 @@ let barHours;
                 if (brushEvent !== null && brushEvent.selection !== null) {
                     // brushed data points
                     let brushed = []
-                    // Find coordinates of brushed region 
+                        // Find coordinates of brushed region 
                     const brushCoords = brushEvent.selection;
                     const x0 = brushCoords[0][0];
                     const x1 = brushCoords[1][0];
@@ -688,7 +687,7 @@ let barHours;
 
                 // Paints the map
                 circlesMap = svgMap.selectAll("circle")
-                    .data(newData, d => d["id"]);;
+                    .data(newData, d => d["id"]);
                 circlesMap.enter()
                     .append("circle")
                     .attr("class", d => "p" + d.price.length + " r" + d.rating * 10) // price and rating classes
@@ -701,7 +700,7 @@ let barHours;
                     .on("mouseover", mouseover)
                     .on("mousemove", mousemove)
                     .on("mouseleave", mouseleave)
-                    .on("click", function (event, d) {
+                    .on("click", function(event, d) {
                         // Redirect to bar's yelp page
                         // window.location = d.url;
                         // Pass data to other charts
@@ -729,17 +728,17 @@ let barHours;
                     .attr('r', 8)
                     .on("mouseover", mouseover)
                     .on("mousemove", mousemove)
-                    .on("mouseleave", mouseleave)
+                    .on("mouseleave", mouseleave);
                 circlesScatter.exit()
                     .remove();
             }
 
             // Paints the radial plot
             function paintRadialPlot() {
-                mousemove = function (event, d) {
+                mousemove = function(event, d) {
                     tooltip.html("This establishment is: " + d.name + "<br> Distance(km): " + (Math.round(d.dist * 100) / 100) + "<br> Bearing: " + (Math.round((d.bearing - 270) * 100) / 100))
                         .style("left", (event.pageX + 10) + "px")
-                        .style("top", (event.pageY - 45) + "px")
+                        .style("top", (event.pageY - 45) + "px");
                 }
                 const radialData = [];
                 const maxDist = d3.max(filteredData, d => {
@@ -751,7 +750,7 @@ let barHours;
                     const barLocation = {
                         lat: latitude,
                         long: longitude,
-                    }
+                    };
                     const dist = distance(currentLocation, barLocation) / maxDist;
                     const bear = bearing(currentLocation, barLocation) + 270;
                     const x = dist * (widthRadial / 2 - 4) * Math.cos(bear * Math.PI / 180) + center.x;
@@ -779,7 +778,7 @@ let barHours;
                     .on("mouseover", mouseover)
                     .on("mousemove", mousemove)
                     .on("mouseleave", mouseleave)
-                // Remove and Draw the center rect 
+                    // Remove and Draw the center rect 
                 svgRadial.selectAll("rect")
                     .remove();
                 svgRadial.append("rect")
@@ -808,7 +807,7 @@ let barHours;
                 showLatitude(latitude);
                 showLongitude(longitude);
                 paintRadialPlot();
-            } 
+            }
 
             function updateLatitude(latitude) {
                 currentLocation = {
@@ -818,7 +817,7 @@ let barHours;
                 showLatitude(latitude);
                 paintRadialPlot();
             }
-            
+
             function updateLongitude(longitude) {
                 currentLocation = {
                     ...currentLocation,
@@ -831,8 +830,8 @@ let barHours;
             // Sets up locations inputs
             {
                 locationElemnt.addEventListener("click", getLocation);
-                latitudeElement.addEventListener("change", ({target}) => updateLatitude(target.value));
-                longitudeElement.addEventListener("change", ({target}) => updateLongitude(target.value));
+                latitudeElement.addEventListener("change", ({ target }) => updateLatitude(target.value));
+                longitudeElement.addEventListener("change", ({ target }) => updateLongitude(target.value));
             }
 
             updateAll();
