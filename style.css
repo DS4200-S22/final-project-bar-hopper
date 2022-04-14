@@ -33,7 +33,7 @@ h3 {
 }
 
 .time-bar {
-    fill: #1c03fc;
+    fill: #38c7a6;
     opacity: 80%;
     stroke: black;
     stroke-width: 1;
@@ -122,5 +122,5 @@ h3 {
 .location-center {
     stroke: gold;
     opacity: 1 !important;
-    stroke-width: 1px;
+    stroke-width: 3px;
 }

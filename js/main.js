@@ -123,11 +123,17 @@ let barHours;
             }
 
             // Sets up channels
+            // const color = {
+            //     "$": "#eb4034",
+            //     "$$": "#1c03fc",
+            //     "$$$": "#6eeb34",
+            //     "$$$$": "#34ebdc",
+            // };
             const color = {
-                "$": "#eb4034",
-                "$$": "#1c03fc",
-                "$$$": "#6eeb34",
-                "$$$$": "#34ebdc",
+                "$": "#004f5f",
+                "$$": "#38c7a6",
+                "$$$": "#1c03fc",
+                "$$$$": "#36e9fe",
             };
 
             // Sets up filter check boxes
@@ -695,10 +701,10 @@ let barHours;
                 svgRadial.append("rect")
                     .attr("x", center.x)
                     .attr("y", center.y)
-                    .attr("width", 9)
-                    .attr("height", 9)
+                    .attr("width", 15)
+                    .attr("height", 15)
                     .attr("class", "location-center")
-                    .style("fill", "black")
+                    .style("fill", "red")
                     .on("mouseover", mouseover)
                     .on("mousemove", mousemoveYouRadial)
                     .on("mouseleave", mouseleave);
