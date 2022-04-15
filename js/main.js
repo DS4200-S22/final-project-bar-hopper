@@ -169,6 +169,7 @@ let barHours;
             const dayFormatter = d3.timeFormat("%w");
             const weekFormatter = d3.timeFormat("%U");
             const hourFormatter = d3.timeFormat("%X");
+            const hourFormatter2 = d3.timeFormat("%H");
             const yAxisFormatter = d3.timeFormat("%m/%d");
 
             // Chart settings
@@ -227,8 +228,9 @@ let barHours;
                     .append("g")
                     .attr('transform', 'translate(' + margin.left + ', ' + margin.top + ')');
 
-                const convertToValidTimeString = (input, overnight = "False") => {
+                const convertToValidTimeString = (input, overnight = "None") => {
                     let toReturn;
+
                     toReturn = input.substring(0, 2) + ':' + input.substring(2, 4) + ':00';
 
                     if ("True" === overnight) {
@@ -347,8 +349,8 @@ let barHours;
                     .append("rect")
                     .attr("class", "time-bar")
                     .attr("x", function(d) {
-                        let h = hourFormatter(new Date(d.open)).split(":"), // changes datum from string, to proper Date Object, back to hour string and splits
-                            xh = parseFloat(h[0]) + parseFloat(h[1] / 60); // time (hour and minute) as decimal
+                        let h = hourFormatter2(new Date(d.open)).split(":"), // changes datum from string, to proper Date Object, back to hour string and splits
+                            xh = parseFloat(h); // time (hour and minute) as decimal
                         return xScale(xh);
                     })
                     //.attr("y", function (d) { return yScale(d3.timeDay.floor(new Date(d.open))) })
