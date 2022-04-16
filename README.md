@@ -86,26 +86,3 @@ See Canvas for more detail on our academic integrity policy and expectations.
 1. Make sure your data is included in the repository on GitHub in the `data` folder.
 
 1. Check on Canvas for the specific requirements of the project milestone you are completing including further submission instructions. 
-
-# Resources
-https://www.d3indepth.com/geographic/
-http://bl.ocks.org/peterssonjonas/4a0e7cb8d23231243e0e
-https://bl.ocks.org/d3noob/e600fd7ebc4c2a5ed57374a9ff95ac23
-http://bl.ocks.org/LauraHornbake/6248343
-https://d3-graph-gallery.com/graph/barplot_horizontal.html
-https://observablehq.com/@d3/d3-scaletime
-### V4
-https://bl.ocks.org/Andrew-Reid/4f3e3cdf708036ed076075b937357826
-### V6
-https://bl.ocks.org/d3noob/f052595e2f92c0da677c67d5cf6f98a1
-https://d3-graph-gallery.com/graph/backgroundmap_changeprojection.html
-https://d3-graph-gallery.com/graph/bubblemap_basic.html
-### Tooltips on map
-https://d3-graph-gallery.com/graph/bubblemap_tooltip.html
-## Checkboxes to Filter Data
-https://bl.ocks.org/johnnygizmo/531991a77047112b7ca89f78b840fba5
-https://d3-graph-gallery.com/graph/bubblemap_buttonControl.html
-## D3 Zoom scale
-https://stackoverflow.com/questions/15147136/how-to-know-the-current-zoom-level-in-d3-js#:~:text=To%20retrieve%20the%20zoom%20state,zoomTransform%20for%20a%20given%20node.
-## Click to another url
-https://stackoverflow.com/questions/10569225/d3-js-click-to-link-to-another-url-encoded-with-variables
