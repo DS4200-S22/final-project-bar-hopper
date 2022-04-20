@@ -85,8 +85,8 @@ let barHours;
             currentlyUsing = mergedData[0];
 
             // Map Dimension and Projection
-            const widthMap = 500;
-            const heightMap = 500;
+            const widthMap = 700;
+            const heightMap = 700;
             const projection_map = d3.geoMercator()
                 .fitSize([widthMap, heightMap], mapData);
 

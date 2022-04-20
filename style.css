@@ -82,6 +82,10 @@ h3 {
     justify-content: space-evenly;
 }
 
+.wrap {
+    flex-wrap: wrap;
+}
+
 .circle,
 .label {
     display: inline-block;
@@ -90,6 +94,7 @@ h3 {
 .circle {
     width: 10px;
     height: 10px;
+    margin-left: 5px;
     margin-right: 10px;
     border-radius: 10px;
 }
@@ -108,6 +113,7 @@ h3 {
 .checkbox {
     width: 15px;
     height: 15px;
+    margin-right: 3px;
 }
 
 #vis-scatter {
