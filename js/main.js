@@ -166,13 +166,6 @@ let barHours;
             const hourFormatter2 = d3.timeFormat("%H");
             const yAxisFormatter = d3.timeFormat("%m/%d");
 
-            // Chart settings
-            let presets = {
-                zoom: 20,
-                userSize: 10,
-                rangeSize: 100
-            };
-
             // Radial Dimension
             const widthRadial = 500;
             const heightRadial = 350;
@@ -287,10 +280,6 @@ let barHours;
                     .domain([0, 24])
                     .range([0, widthTime]);
 
-                let yScale = d3.scaleTime()
-                    .domain(dateRange)
-                    .range([0, heightTime]);
-
                 // Use days for y axis
                 let yScaleDays = d3.scaleBand()
                     .domain(barHours.map(function(d) { return d.day }))
@@ -347,7 +336,6 @@ let barHours;
                             xh = parseFloat(h); // time (hour and minute) as decimal
                         return xScale(xh);
                     })
-                    //.attr("y", function (d) { return yScale(d3.timeDay.floor(new Date(d.open))) })
                     .attr("y", function(d) { return yScaleDays(d.day) })
                     .attr("width", function(d) {
                         let hstart = new Date(d.open),
