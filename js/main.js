@@ -123,12 +123,6 @@ let barHours;
             }
 
             // Sets up channels
-            // const color = {
-            //     "$": "#eb4034",
-            //     "$$": "#1c03fc",
-            //     "$$$": "#6eeb34",
-            //     "$$$$": "#34ebdc",
-            // };
             const color = {
                 "$": "#004f5f",
                 "$$": "#38c7a6",
