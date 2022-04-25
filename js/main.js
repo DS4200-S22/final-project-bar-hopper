@@ -79,11 +79,9 @@ function showError(error) {
 let currentlyUsing;
 let barHours;
 
-// https://raw.githubusercontent.com/DS4200-S22/final-project-bar-hopper/main/data/final_merged_data.csv
-
 (function() {
     d3.json("https://raw.githubusercontent.com/DS4200-S22/final-project-bar-hopper/main/data/boston.geojson").then(function(mapData) {
-        d3.csv("https://raw.githubusercontent.com/jjz17/Bar-Hopper/main/clean.csv").then(function(mergedData) {
+        d3.csv("https://raw.githubusercontent.com/DS4200-S22/final-project-bar-hopper/main/data/bar_data.csv").then(function(mergedData) {
             currentlyUsing = mergedData[0];
 
             // Map Dimension and Projection
